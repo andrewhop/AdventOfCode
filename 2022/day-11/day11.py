@@ -1,4 +1,4 @@
-import time
+from functools import reduce
 from math import floor
 
 
@@ -13,91 +13,74 @@ class Monkey:
         self.inspected = 0
 
 
-def cleanup(item):
-    item = item.strip()
-    return int(item)
-
-
-def puzzle_eleven_one():
+def part_one(file):
     monkeys = []
-    with open("input-11.txt") as file:
-        lines = file.readlines()
-        index = 0
-        while index < len(lines):
-            # Monkey num
-            index += 1
-            items = list(map(cleanup, lines[index].split(":")[1].split(",")))
-            index += 1
-            operation_line = lines[index].split("=")[1].strip()
-            index += 1
-            test = int(lines[index].split("by")[1].strip())
-            index += 1
-            true = int(lines[index].split("monkey")[1].strip())
-            index += 1
-            false = int(lines[index].split("monkey")[1].strip())
-            monkeys.append(Monkey(items, operation_line, test, true, false))
-            index += 2
-
+    data = open(file).read().strip()
+    batches = [batch.split('\n') for batch in data.split('\n\n')]
+    for batch in batches:
+        num, items, operation, test, true, false = batch
+        items = [int(i) for i in items.split(':')[1].split(',')]
+        operation = operation.split("=")[1].strip()
+        test = int(test.split()[-1])
+        true = int(true.split()[-1])
+        false = int(false.split()[-1])
+        monkeys.append(Monkey(items, operation, test, true, false))
     for i in range(20):
         for monkey in monkeys:
-            for item in monkey.items:
+            for old in monkey.items:
                 monkey.inspected += 1
-                old = item
                 new_worry = eval(monkey.operation)
                 new_worry = floor(new_worry / 3)
                 should_throw = new_worry % monkey.test == 0
                 new_monkey = monkey.to_pass[should_throw]
                 monkeys[new_monkey].items.append(new_worry)
             monkey.items = []
-
     throws = []
     for monkey in monkeys:
         throws.append(monkey.inspected)
     throws.sort(reverse=True)
-    print(f'11.1 answer {throws[0] * throws[1]}')
+    return throws[0] * throws[1]
 
 
-def puzzle_eleven_two():
+def part_two(file):
     monkeys = []
-    common_multiple = 1
-    with open("input-11.txt") as file:
-        lines = file.readlines()
-        index = 0
-        while index < len(lines):
-            # Monkey num
-            index += 1
-            items = list(map(cleanup, lines[index].split(":")[1].split(",")))
-            index += 1
-            operation_line = lines[index].split("=")[1].strip()
-            index += 1
-            test = int(lines[index].split("by")[1].strip())
-            common_multiple *= test
-            index += 1
-            true = int(lines[index].split("monkey")[1].strip())
-            index += 1
-            false = int(lines[index].split("monkey")[1].strip())
-            monkeys.append(Monkey(items, operation_line, test, true, false))
-            index += 2
-
+    data = open(file).read().strip()
+    batches = [batch.split('\n') for batch in data.split('\n\n')]
+    for batch in batches:
+        num, items, operation, test, true, false = batch
+        items = [int(i) for i in items.split(':')[1].split(',')]
+        operation = operation.split("=")[1].strip()
+        test = int(test.split()[-1])
+        true = int(true.split()[-1])
+        false = int(false.split()[-1])
+        monkeys.append(Monkey(items, operation, test, true, false))
+    common_multiple = reduce((lambda x, y: x * y), [val.test for val in monkeys])
     for i in range(10000):
         for monkey in monkeys:
-            for item in monkey.items:
+            for old in monkey.items:
                 monkey.inspected += 1
-                old = item
                 new_worry = eval(monkey.operation)
                 new_worry = new_worry % common_multiple
                 should_throw = new_worry % monkey.test == 0
                 new_monkey = monkey.to_pass[should_throw]
                 monkeys[new_monkey].items.append(new_worry)
             monkey.items = []
-
     throws = []
     for monkey in monkeys:
         throws.append(monkey.inspected)
     throws.sort(reverse=True)
-    print(f'11.2 answer {throws[0] * throws[1]}')
+    return throws[0] * throws[1]
 
 
 if __name__ == '__main__':
-    puzzle_eleven_one()
-    puzzle_eleven_two()
+    expected = 10605
+    got = part_one('sample.txt')
+    match = "match" if expected == got else "don't match"
+    print(f"Sample part 1 {match}, expected {expected}, got {got}")
+    print(f"part 1: {part_one('input.txt')}")
+
+    expected = 2713310158
+    got = part_two('sample.txt')
+    match = "match" if expected == got else "don't match"
+    print(f"Sample part 2 {match}, expected {expected}, got {got}")
+    print(f"part 2: {part_two('input.txt')}")

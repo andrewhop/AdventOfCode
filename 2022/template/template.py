@@ -23,9 +23,15 @@ def part_two(file):
 
 
 if __name__ == '__main__':
-    part_1_sample = 0
-    part_2_sample = 0
-    print(f"Sample part 1 {part_1_sample}, got {part_one('sample.txt')}")
+    expected = 0
+    got = part_one('sample.txt')
+    match = "match" if expected == got else "don't match"
+    print(f"Sample part 1 {match}, expected {expected}, got {got}")
     print(f"part 1: {part_one('input.txt')}")
-    print(f"Sample part 2 {part_2_sample}, got {part_two('sample.txt')}")
+
+    expected = 0
+    got = part_two('sample.txt')
+    match = "match" if expected == got else "don't match"
+    print(f"Sample part 2 {match}, expected {expected}, got {got}")
     print(f"part 2: {part_two('input.txt')}")
+
