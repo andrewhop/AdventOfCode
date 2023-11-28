@@ -1,3 +1,4 @@
 .idea
 Pipfile.lock
-
+build
+cmake-build*
