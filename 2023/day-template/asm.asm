@@ -31,12 +31,15 @@ _add_array:
     // x3 is the current index
     // x4 is the temp index address or
     // x4 is the value from the current index
-    mov x2, x0
-    mov x0, #0
-    mov x3, #0
+#define RUNING_SUM x0
+#define NUM_ITEMS x1
+#define INDEX x3
+    mov x2, RUNING_SUM
+    mov RUNING_SUM, #0
+    mov INDEX, #0
 
     // Check we have at least 1 item
-    cmp x1, #0
+    cmp NUM_ITEMS, #0
     b.eq finish
 
 loop:
