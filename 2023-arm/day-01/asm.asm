@@ -6,15 +6,30 @@
 
 // Function parameters
 #define string_ptr x0
+#define mapping x1
 
 // Algorithm variables
 #define temp x1
-#define sum x2
 #define first x3
 #define last x4
 #define flags x5
 #define current_byte w6
 #define current x6
+#define sum x7
+
+
+
+// get_charecter(str_ptr, mapping) -> (updated_str_ptr, value)
+get_charecter:
+    ldrb current_byte, [string_ptr]
+    cmp current, ASCII_0
+    b.lt next
+
+    cmp current, ASCII_9
+    b.gt next
+
+    // This is an ascii number get the actual value
+    sub current, current, ASCII_0
 
 
 .globl	_puzzle1
