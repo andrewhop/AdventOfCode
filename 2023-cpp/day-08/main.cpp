@@ -26,14 +26,12 @@ size_t day8p1(const std::basic_string<char>& content) {
     // skip newline and blank line
     index+=2;
 
-    // build the map
-    std::vector<uint16_t> map(wordToNum("ZZZ"));
+    // build the map, max value is wordToNum("ZZZ") = 26425
+    std::vector<uint16_t> map(26425);
     size_t content_length = content.length();
     while (__builtin_expect((index < content_length), 1)) {
         uint16_t source = ((content[index] - 'A') << 10) + ((content[index+1] - 'A') << 5) + (content[index+2] - 'A');
-//        index += 4;
         uint16_t left = ((content[index+7] - 'A') << 10) + ((content[index+8] - 'A') << 5) + (content[index+9] - 'A');
-//        index+=2;
         uint16_t right = ((content[index+12] - 'A') << 10) + ((content[index+13] - 'A') << 5) + (content[index+14] - 'A');
         index+=17;
         map[source * 2] = left * 2;
@@ -87,7 +85,7 @@ int main(int argc, char* argv[]) {
     }
     auto end = std::chrono::high_resolution_clock::now();
     std::cout << "Unused total count to prevent optimization " << total << std::endl;
-    double nanosecondDuration = duration_cast<std::chrono::nanoseconds >(end - start).count()/ iterations;
+    double nanosecondDuration = std::chrono::duration_cast<std::chrono::nanoseconds >(end - start).count()/ iterations;
     std::cout << "Average runtime over " << iterations << " iterations: " << nanosecondDuration/1000 << " microseconds." << std::endl;
 
     return 0;
