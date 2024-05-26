@@ -19,13 +19,7 @@ std::string numToWord(uint16_t num) {
     return std::string(content);
 }
 
-int processFileContent(const std::basic_string<char>& content) {
-//    std::cout << "File content:\n" << content << std::endl;
-
-//    int inital_size = content.length()/10;
-//    std::cerr << "File length: " << content.length() << " guessing " << inital_size << std::endl;
-//
-//    std::vector<bool> bitVector(inital_size, false);
+int day8p1(const std::basic_string<char>& content) {
     size_t index = 0;
     size_t instruction_start = 0;
     size_t instruction_end = 0;
@@ -46,11 +40,9 @@ int processFileContent(const std::basic_string<char>& content) {
         index+=2;
         map[source * 2] = left * 2;
         map[source * 2 + 1] = right * 2;
-//        std::cout << source << " = " << left << " " << right << std::endl;
     }
 
     // map done
-
     size_t count = 0;
     size_t position = 0;
     uint16_t end = wordToNum("ZZZ") * 2;
@@ -87,27 +79,25 @@ int main(int argc, char* argv[]) {
     if (argc > 1) {
         filePath = argv[1];
     }
-//
-//    const std::basic_string<char> &sampleContent = parse_file(filePath + "/sample.txt");
-//    int sampleResult = processFileContent(sampleContent);
-//    std::cout << "Sample expected 6, got " << sampleResult << std::endl;
-//
-//    const std::basic_string<char> &sample2Content = parse_file(filePath + "/sample2.txt");
-//    int sample2Result = processFileContent(sample2Content);
-//    std::cout << "Sample expected 8, got " << sample2Result << std::endl;
+
+    const std::basic_string<char> &sampleContent = parse_file(filePath + "/sample.txt");
+    int sampleResult = day8p1(sampleContent);
+    std::cout << "Sample expected 6, got " << sampleResult << std::endl;
 
     const std::basic_string<char> &inputContent = parse_file(filePath + "/input.txt");
-    int inputResult = processFileContent(inputContent);
+    int inputResult = day8p1(inputContent);
     std::cout << "Input expected 14429, got " << inputResult << std::endl;
 
     auto start = std::chrono::high_resolution_clock::now();
-    uint64_t iterations = 1000;
+    uint64_t iterations = 10000;
+    int total = 0;
     for (uint64_t i = 0; i < iterations; i++) {
-        int inputResult = processFileContent(inputContent);
+        total += day8p1(inputContent);
     }
     auto end = std::chrono::high_resolution_clock::now();
+    std::cout << "Unused total count to prevent optimization " << total << std::endl;
     double averageDuration = duration_cast<std::chrono::microseconds >(end - start).count()/ iterations;
     std::cout << "Average runtime over " << iterations << " iterations: " << averageDuration << " microseconds." << std::endl;
 
-    return 0;  // Return success
+    return 0;
 }
