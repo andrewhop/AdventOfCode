@@ -21,7 +21,6 @@ std::string numToWord(uint16_t num) {
 
 int day8p1(const std::basic_string<char>& content) {
     size_t index = 0;
-    size_t instruction_start = 0;
     size_t instruction_end = 0;
     while(content[index] != '\n') {
         index++;
@@ -62,7 +61,7 @@ int day8p1(const std::basic_string<char>& content) {
 }
 
 std::basic_string<char> parse_file(std::string filePath) {
-    std::ifstream file(filePath);  // Open the file
+    std::ifstream file(filePath);
     if (!file.is_open()) {
         std::cerr << "Failed to open the file: " << filePath << std::endl;
         return "";
@@ -96,8 +95,8 @@ int main(int argc, char* argv[]) {
     }
     auto end = std::chrono::high_resolution_clock::now();
     std::cout << "Unused total count to prevent optimization " << total << std::endl;
-    double averageDuration = duration_cast<std::chrono::microseconds >(end - start).count()/ iterations;
-    std::cout << "Average runtime over " << iterations << " iterations: " << averageDuration << " microseconds." << std::endl;
+    double averageDuration = duration_cast<std::chrono::nanoseconds >(end - start).count()/ iterations;
+    std::cout << "Average runtime over " << iterations << " iterations: " << averageDuration/1000 << " microseconds." << std::endl;
 
     return 0;
 }
