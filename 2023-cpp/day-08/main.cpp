@@ -44,11 +44,12 @@ int day8p1(const std::basic_string<char>& content) {
     size_t position = 0;
     uint16_t end = wordToNum("ZZZ") * 2;
     while (position != end) {
-        if (content[count % instruction_end] == 'L') {
-            position = map[position];
-        } else {
-            position = map[position + 1];
-        }
+//        if (content[count % instruction_end] == 'L') {
+//            position = map[position];
+//        } else {
+//            position = map[position + 1];
+//        }
+        position = map[position + (content[count % instruction_end] != 'L')];
         count += 1;
     }
 
@@ -90,8 +91,8 @@ int main(int argc, char* argv[]) {
     }
     auto end = std::chrono::high_resolution_clock::now();
     std::cout << "Unused total count to prevent optimization " << total << std::endl;
-    double averageDuration = duration_cast<std::chrono::nanoseconds >(end - start).count()/ iterations;
-    std::cout << "Average runtime over " << iterations << " iterations: " << averageDuration/1000 << " microseconds." << std::endl;
+    double nanosecondDuration = duration_cast<std::chrono::nanoseconds >(end - start).count()/ iterations;
+    std::cout << "Average runtime over " << iterations << " iterations: " << nanosecondDuration/1000 << " microseconds." << std::endl;
 
     return 0;
 }
