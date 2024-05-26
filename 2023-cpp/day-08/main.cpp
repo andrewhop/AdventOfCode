@@ -19,7 +19,7 @@ std::string numToWord(uint16_t num) {
     return std::string(content);
 }
 
-int day8p1(const std::basic_string<char>& content) {
+size_t day8p1(const std::basic_string<char>& content) {
     size_t instruction_end = content.find_first_of('\n');
     size_t index = instruction_end;
 
@@ -28,7 +28,8 @@ int day8p1(const std::basic_string<char>& content) {
 
     // build the map
     std::vector<uint16_t> map(wordToNum("ZZZ"));
-    while (index < content.length()) {
+    size_t content_length = content.length();
+    while (__builtin_expect((index < content_length), 1)) {
         uint16_t source = ((content[index++] - 'A') << 10) + ((content[index++] - 'A') << 5) + (content[index++] - 'A');
         index += 4;
         uint16_t left = ((content[index++] - 'A') << 10) + ((content[index++] - 'A') << 5) + (content[index++] - 'A');
@@ -43,12 +44,7 @@ int day8p1(const std::basic_string<char>& content) {
     size_t count = 0;
     size_t position = 0;
     uint16_t end = wordToNum("ZZZ") * 2;
-    while (position != end) {
-//        if (content[count % instruction_end] == 'L') {
-//            position = map[position];
-//        } else {
-//            position = map[position + 1];
-//        }
+    while (__builtin_expect((position != end), 1)) {
         position = map[position + (content[count % instruction_end] != 'L')];
         count += 1;
     }
