@@ -20,16 +20,14 @@ std::string numToWord(uint16_t num) {
 }
 
 int day8p1(const std::basic_string<char>& content) {
-//    while(content[index] != '\n') {
-//        index++;
-//        instruction_end = index;
-//    }
     size_t instruction_end = content.find_first_of('\n');
     size_t index = instruction_end;
+
     // skip newline and blank line
     index+=2;
+
     // build the map
-    std::vector<uint16_t> map(2 * 26 * 26 * 26);
+    std::vector<uint16_t> map(wordToNum("ZZZ"));
     while (index < content.length()) {
         uint16_t source = ((content[index++] - 'A') << 10) + ((content[index++] - 'A') << 5) + (content[index++] - 'A');
         index += 4;
@@ -46,9 +44,6 @@ int day8p1(const std::basic_string<char>& content) {
     size_t position = 0;
     uint16_t end = wordToNum("ZZZ") * 2;
     while (position != end) {
-        if (map[position] == 65535) {
-            std::cout << "Invalid location: " << position << std::endl;
-        }
         if (content[count % instruction_end] == 'L') {
             position = map[position];
         } else {
