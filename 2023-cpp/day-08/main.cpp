@@ -20,12 +20,12 @@ std::string numToWord(uint16_t num) {
 }
 
 int day8p1(const std::basic_string<char>& content) {
-    size_t index = 0;
-    size_t instruction_end = 0;
-    while(content[index] != '\n') {
-        index++;
-        instruction_end = index;
-    }
+//    while(content[index] != '\n') {
+//        index++;
+//        instruction_end = index;
+//    }
+    size_t instruction_end = content.find_first_of('\n');
+    size_t index = instruction_end;
     // skip newline and blank line
     index+=2;
     // build the map
