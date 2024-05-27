@@ -20,15 +20,30 @@ std::string numToWord(uint16_t num) {
 }
 
 size_t day8p1(const std::basic_string<char>& content) {
+    auto start = std::chrono::high_resolution_clock::now();
+
     size_t instruction_end = content.find_first_of('\n');
+    std::vector<uint16_t> instructions(instruction_end);
+    for (size_t i = 0; i < instruction_end; i++) {
+        instructions[i] = content[i] != 'L';
+    }
+
     size_t index = instruction_end;
+
+    auto end = std::chrono::high_resolution_clock::now();
+    double nanosecondDuration = std::chrono::duration_cast<std::chrono::nanoseconds >(end - start).count();
+    std::cout << "Finding end of instruction took: " << nanosecondDuration/1000 << " microseconds." << std::endl;
+
+
 
     // skip newline and blank line
     index+=2;
 
     // build the map, max value is wordToNum("ZZZ") = 26425
+    start = std::chrono::high_resolution_clock::now();
+
     std::vector<uint16_t> map(26425);
-    size_t content_length = content.length();
+    size_t content_length = content.size();
     while (__builtin_expect((index < content_length), 1)) {
         uint16_t source = ((content[index] - 'A') << 10) + ((content[index+1] - 'A') << 5) + (content[index+2] - 'A');
         uint16_t left = ((content[index+7] - 'A') << 10) + ((content[index+8] - 'A') << 5) + (content[index+9] - 'A');
@@ -37,19 +52,40 @@ size_t day8p1(const std::basic_string<char>& content) {
         map[source * 2] = left * 2;
         map[source * 2 + 1] = right * 2;
     }
+    end = std::chrono::high_resolution_clock::now();
+    nanosecondDuration = std::chrono::duration_cast<std::chrono::nanoseconds >(end - start).count();
+    std::cout << "Building the map took: " << nanosecondDuration/1000 << " microseconds." << std::endl;
+
 
     // map done
+    start = std::chrono::high_resolution_clock::now();
+
     size_t count = 0;
     size_t position = 0;
-    uint16_t end = wordToNum("ZZZ") * 2;
-    while (__builtin_expect((position != end), 1)) {
-        position = map[position + (content[count % instruction_end] != 'L')];
+    // wordToNum("ZZZ") * 2;
+    uint16_t target = 52850;
+    while (__builtin_expect((position != target), 1)) {
+        position = map[position + instructions[count % instruction_end]];
         count += 1;
     }
+    end = std::chrono::high_resolution_clock::now();
+    nanosecondDuration = std::chrono::duration_cast<std::chrono::nanoseconds >(end - start).count();
+    std::cout << "Solving problem took: " << nanosecondDuration/1000 << " microseconds." << std::endl << std::endl;
+
 
     return count;
 }
 
+//std::vector<uint8_t> parse_file(const std::string& filePath) {
+//    std::ifstream file(filePath, std::ios::binary);
+//    if (!file.is_open()) {
+//        std::cerr << "Failed to open the file: " << filePath << std::endl;
+//        return {};
+//    }
+//    std::vector<uint8_t> fileContent((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+//    file.close();
+//    return fileContent;
+//}
 std::basic_string<char> parse_file(std::string filePath) {
     std::ifstream file(filePath);
     if (!file.is_open()) {
@@ -62,6 +98,7 @@ std::basic_string<char> parse_file(std::string filePath) {
     file.close();
     return fileContent;
 }
+
 
 int main(int argc, char* argv[]) {
     std::string filePath = ".";
@@ -78,7 +115,7 @@ int main(int argc, char* argv[]) {
     std::cout << "Input expected 14429, got " << inputResult << std::endl;
 
     auto start = std::chrono::high_resolution_clock::now();
-    uint64_t iterations = 10000;
+    uint64_t iterations = 10;
     int total = 0;
     for (uint64_t i = 0; i < iterations; i++) {
         total += day8p1(inputContent);
