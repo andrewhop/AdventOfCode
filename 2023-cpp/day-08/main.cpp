@@ -24,7 +24,8 @@ size_t day8p1(const std::basic_string<char>& content) {
     auto start = std::chrono::high_resolution_clock::now();
 #endif
     size_t instruction_end = content.find_first_of('\n');
-    std::vector<uint16_t> instructions(instruction_end);
+//    std::vector<uint16_t> instructions(instruction_end);
+    uint8_t* instructions = new uint8_t[instruction_end];
     for (size_t i = 0; i < instruction_end; i++) {
         instructions[i] = content[i] != 'L';
     }
@@ -35,8 +36,6 @@ size_t day8p1(const std::basic_string<char>& content) {
     double nanosecondDuration = std::chrono::duration_cast<std::chrono::nanoseconds >(end - start).count();
     std::cout << "Finding end of instruction took: " << nanosecondDuration/1000 << " microseconds." << std::endl;
 #endif
-
-
     // skip newline and blank line
     index+=2;
 
@@ -44,15 +43,16 @@ size_t day8p1(const std::basic_string<char>& content) {
 #if defined(PROFILE)
     start = std::chrono::high_resolution_clock::now();
 #endif
-    std::vector<uint16_t> map(26425);
+//    std::vector<uint16_t> map(26425);
+    uint16_t map[52850];
     size_t content_length = content.size();
     while (__builtin_expect((index < content_length), 1)) {
         uint16_t source = ((content[index] - 'A') << 10) + ((content[index+1] - 'A') << 5) + (content[index+2] - 'A');
         uint16_t left = ((content[index+7] - 'A') << 10) + ((content[index+8] - 'A') << 5) + (content[index+9] - 'A');
         uint16_t right = ((content[index+12] - 'A') << 10) + ((content[index+13] - 'A') << 5) + (content[index+14] - 'A');
-        index+=17;
         map[source * 2] = left * 2;
         map[source * 2 + 1] = right * 2;
+        index+=17;
     }
 #if defined(PROFILE)
     end = std::chrono::high_resolution_clock::now();
@@ -66,18 +66,26 @@ size_t day8p1(const std::basic_string<char>& content) {
 #endif
 
     size_t count = 0;
+    size_t instruction_count = 0;
     size_t position = 0;
     // wordToNum("ZZZ") * 2;
     uint16_t target = 52850;
     while (__builtin_expect((position != target), 1)) {
-        position = map[position + instructions[count % instruction_end]];
-        count += 1;
+        uint16_t offset = instructions[instruction_count];
+        size_t next_position = position + offset;
+        position = map[next_position];
+        count++;
+        instruction_count++;
+        if (instruction_count == instruction_end) {
+            instruction_count = 0;
+        }
     }
 #if defined(PROFILE)
     end = std::chrono::high_resolution_clock::now();
     nanosecondDuration = std::chrono::duration_cast<std::chrono::nanoseconds >(end - start).count();
     std::cout << "Solving problem took: " << nanosecondDuration/1000 << " microseconds." << std::endl << std::endl;
 #endif
+    delete[] instructions;
 
     return count;
 }
