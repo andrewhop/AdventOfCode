@@ -3,7 +3,6 @@
 #include <sstream>
 #include <string>
 #include <cstdint>
-#include <vector>
 #include <chrono>
 
 uint16_t wordToNum(const char content[]) {
@@ -41,8 +40,8 @@ size_t day8p1(const std::basic_string<char>& content) {
 #if defined(PROFILE)
     start = std::chrono::high_resolution_clock::now();
 #endif
-    // build the map, max value is wordToNum("ZZZ") = 26425 * 2 = 52850
-    uint16_t map[52850];
+    // build the map, max value is wordToNum("ZZZ") = 26425 * 2 = 52850 + 2 for the last item at + 1
+    uint16_t map[52852];
     size_t content_length = content.size();
     while (__builtin_expect((index < content_length), 1)) {
         uint16_t source = ((content[index] - 'A') << 10) + ((content[index+1] - 'A') << 5) + (content[index+2] - 'A');
