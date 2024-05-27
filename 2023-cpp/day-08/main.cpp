@@ -24,7 +24,6 @@ size_t day8p1(const std::basic_string<char>& content) {
     auto start = std::chrono::high_resolution_clock::now();
 #endif
     size_t instruction_end = content.find_first_of('\n');
-//    std::vector<uint16_t> instructions(instruction_end);
     uint8_t* instructions = new uint8_t[instruction_end];
     for (size_t i = 0; i < instruction_end; i++) {
         instructions[i] = content[i] != 'L';
@@ -39,11 +38,10 @@ size_t day8p1(const std::basic_string<char>& content) {
     // skip newline and blank line
     index+=2;
 
-    // build the map, max value is wordToNum("ZZZ") = 26425
 #if defined(PROFILE)
     start = std::chrono::high_resolution_clock::now();
 #endif
-//    std::vector<uint16_t> map(26425);
+    // build the map, max value is wordToNum("ZZZ") = 26425 * 2 = 52850
     uint16_t map[52850];
     size_t content_length = content.size();
     while (__builtin_expect((index < content_length), 1)) {
@@ -76,7 +74,7 @@ size_t day8p1(const std::basic_string<char>& content) {
         position = map[next_position];
         count++;
         instruction_count++;
-        if (instruction_count == instruction_end) {
+        if (__builtin_expect((instruction_count == instruction_end), 0)) {
             instruction_count = 0;
         }
     }
@@ -90,16 +88,6 @@ size_t day8p1(const std::basic_string<char>& content) {
     return count;
 }
 
-//std::vector<uint8_t> parse_file(const std::string& filePath) {
-//    std::ifstream file(filePath, std::ios::binary);
-//    if (!file.is_open()) {
-//        std::cerr << "Failed to open the file: " << filePath << std::endl;
-//        return {};
-//    }
-//    std::vector<uint8_t> fileContent((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-//    file.close();
-//    return fileContent;
-//}
 std::basic_string<char> parse_file(std::string filePath) {
     std::ifstream file(filePath);
     if (!file.is_open()) {
@@ -112,7 +100,6 @@ std::basic_string<char> parse_file(std::string filePath) {
     file.close();
     return fileContent;
 }
-
 
 int main(int argc, char* argv[]) {
     std::string filePath = ".";
