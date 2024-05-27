@@ -20,28 +20,30 @@ std::string numToWord(uint16_t num) {
 }
 
 size_t day8p1(const std::basic_string<char>& content) {
+#if defined(PROFILE)
     auto start = std::chrono::high_resolution_clock::now();
-
+#endif
     size_t instruction_end = content.find_first_of('\n');
     std::vector<uint16_t> instructions(instruction_end);
     for (size_t i = 0; i < instruction_end; i++) {
         instructions[i] = content[i] != 'L';
     }
-
     size_t index = instruction_end;
 
+#if defined(PROFILE)
     auto end = std::chrono::high_resolution_clock::now();
     double nanosecondDuration = std::chrono::duration_cast<std::chrono::nanoseconds >(end - start).count();
     std::cout << "Finding end of instruction took: " << nanosecondDuration/1000 << " microseconds." << std::endl;
-
+#endif
 
 
     // skip newline and blank line
     index+=2;
 
     // build the map, max value is wordToNum("ZZZ") = 26425
+#if defined(PROFILE)
     start = std::chrono::high_resolution_clock::now();
-
+#endif
     std::vector<uint16_t> map(26425);
     size_t content_length = content.size();
     while (__builtin_expect((index < content_length), 1)) {
@@ -52,13 +54,16 @@ size_t day8p1(const std::basic_string<char>& content) {
         map[source * 2] = left * 2;
         map[source * 2 + 1] = right * 2;
     }
+#if defined(PROFILE)
     end = std::chrono::high_resolution_clock::now();
     nanosecondDuration = std::chrono::duration_cast<std::chrono::nanoseconds >(end - start).count();
     std::cout << "Building the map took: " << nanosecondDuration/1000 << " microseconds." << std::endl;
-
+#endif
 
     // map done
+#if defined(PROFILE)
     start = std::chrono::high_resolution_clock::now();
+#endif
 
     size_t count = 0;
     size_t position = 0;
@@ -68,10 +73,11 @@ size_t day8p1(const std::basic_string<char>& content) {
         position = map[position + instructions[count % instruction_end]];
         count += 1;
     }
+#if defined(PROFILE)
     end = std::chrono::high_resolution_clock::now();
     nanosecondDuration = std::chrono::duration_cast<std::chrono::nanoseconds >(end - start).count();
     std::cout << "Solving problem took: " << nanosecondDuration/1000 << " microseconds." << std::endl << std::endl;
-
+#endif
 
     return count;
 }
