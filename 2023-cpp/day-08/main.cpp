@@ -5,8 +5,12 @@
 #include <cstdint>
 #include <chrono>
 
-uint16_t wordToNum(const char content[]) {
+uint16_t wordToNumOld(const char content[]) {
     return ((content[0] - 'A') << 10) + ((content[1] - 'A') << 5) + (content[2] - 'A');
+}
+
+uint16_t wordToNumNew(const char content[]) {
+    return ((content[0] - 'A') * 676) + ((content[1] - 'A') * 26) + (content[2] - 'A');
 }
 
 std::string numToWord(uint16_t num) {
@@ -40,13 +44,13 @@ size_t day8p1(const std::basic_string<char>& content) {
 #if defined(PROFILE)
     start = std::chrono::high_resolution_clock::now();
 #endif
-    // build the map, max value is wordToNum("ZZZ") = 26425 * 2 = 52850 + 2 for the last item at + 1
-    uint16_t map[52852];
+    // build the map, max value is wordToNum("ZZZ") = 17575 * 2 = 35150 + 2 for the last item at + 1
+    uint16_t map[35152];
     size_t content_length = content.size();
     while (__builtin_expect((index < content_length), 1)) {
-        uint16_t source = ((content[index] - 'A') << 10) + ((content[index+1] - 'A') << 5) + (content[index+2] - 'A');
-        uint16_t left = ((content[index+7] - 'A') << 10) + ((content[index+8] - 'A') << 5) + (content[index+9] - 'A');
-        uint16_t right = ((content[index+12] - 'A') << 10) + ((content[index+13] - 'A') << 5) + (content[index+14] - 'A');
+        uint16_t source = ((content[index] - 'A') * 676) + ((content[index+1] - 'A') * 26) + (content[index+2] - 'A');
+        uint16_t left = ((content[index+7] - 'A') * 676) + ((content[index+8] - 'A') * 26) + (content[index+9] - 'A');
+        uint16_t right = ((content[index+12] - 'A') * 676) + ((content[index+13] - 'A') * 26) + (content[index+14] - 'A');
         map[source * 2] = left * 2;
         map[source * 2 + 1] = right * 2;
         index+=17;
@@ -66,7 +70,7 @@ size_t day8p1(const std::basic_string<char>& content) {
     size_t instruction_count = 0;
     size_t position = 0;
     // wordToNum("ZZZ") * 2;
-    uint16_t target = 52850;
+    uint16_t target = 35150;
     while (__builtin_expect((position != target), 1)) {
         uint16_t offset = instructions[instruction_count];
         size_t next_position = position + offset;
