@@ -1,18 +1,13 @@
-const MAP_SIZE: u16 = 25600 + 800 + 25 + 1;
-
-const A: u8 = b'A';
-const Z: u8 = b'Z';
-const L: u8 = b'L';
-
+const MAP_SIZE: u16 = (25 << 10) + (25 << 5) + 25 + 1;
 
 fn word_to_num(input: &[u8]) -> u16 {
-    (((input[0] - A) as u16) << 10) + (((input[1] - A) as u16) << 5) + ((input[2] - A) as u16)
+    (((input[0] - b'A') as u16) << 10) + (((input[1] - b'A') as u16) << 5) + ((input[2] - b'A') as u16)
 }
 
 pub fn day8_part1_low_level(input: &Vec<u8>) -> u64 {
     let end_of_instructions = input.iter().position(|&x| x == b'\n').unwrap();
 
-    let instructions = input[..end_of_instructions].to_vec();
+    let instructions = &input[..end_of_instructions];
     let mut map: [[u16; 2]; MAP_SIZE as usize] = [[0; 2]; MAP_SIZE as usize];
 
     let mut index = end_of_instructions + 2;
@@ -27,10 +22,10 @@ pub fn day8_part1_low_level(input: &Vec<u8>) -> u64 {
 
     let mut instruction_count = 0;
     let mut position = 0;
-    let target = word_to_num(&[Z, Z, Z]);
+    let target = word_to_num(&[b'Z', b'Z', b'Z']);
 
     while position != target {
-        let direction = if instructions[instruction_count % instructions.len()] == L {0} else {1};
+        let direction = if instructions[instruction_count % instructions.len()] == b'L' {0} else {1};
         instruction_count = instruction_count + 1;
         position = map[position as usize][direction as usize];
     }
@@ -59,7 +54,7 @@ mod test {
 
     #[test]
     fn word_to_num_test() {
-        let a = [A, A, A, Z, Z, Z];
+        let a = [b'A', b'A', b'A', b'Z', b'Z', b'Z'];
         assert_eq!(word_to_num(&a[0..3]), 0);
         assert_eq!(word_to_num(&a[1..4]), 25);
         assert_eq!(word_to_num(&a[3..6]), 26425);
