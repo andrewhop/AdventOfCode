@@ -1,5 +1,8 @@
+use std::mem::MaybeUninit;
+
 const MAP_SIZE: u16 = (25 << 10) + (25 << 5) + 25 + 1;
 
+// #[inline(always)]
 fn word_to_num(input: &[u8]) -> u16 {
     (((input[0] - b'A') as u16) << 10)
         + (((input[1] - b'A') as u16) << 5)
@@ -8,7 +11,8 @@ fn word_to_num(input: &[u8]) -> u16 {
 
 pub fn day8_part1_low_level(input: &Vec<u8>) -> u64 {
     let end_of_instructions = input.iter().position(|&x| x == b'\n').unwrap();
-    let mut map: [[u16; 2]; MAP_SIZE as usize] = [[0; 2]; MAP_SIZE as usize];
+    let array: [[MaybeUninit<u16>; 2]; MAP_SIZE as usize] = unsafe { MaybeUninit::uninit().assume_init() };
+    let mut map = unsafe { std::mem::transmute::<_, [[u16; 2]; MAP_SIZE as usize]>(array) };
 
     let mut index = end_of_instructions + 2;
     while index < input.len() {

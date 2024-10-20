@@ -20,12 +20,7 @@ fn word_to_num3(first: u8, second: u8, third: u8) -> u16 {
     (((first - A) as u16) * 26 * 26) + (((second - A) as u16) * 26) + ((third - A) as u16)
 }
 
-// time:   [31.684 µs 31.721 µs 31.772 µs]
-fn day_8(c: &mut Criterion) {
-    let input = input("resources/day8_input.txt");
-    c.bench_function("day8_part1_low_level", |b| {
-        b.iter(|| day8_part1_low_level(black_box(&input)))
-    });
+fn day8_utils(c: &mut Criterion) {
     let a = [A, A, A, Z, Z, Z];
     c.bench_function("word_to_num", |b| {
         b.iter(|| word_to_num(black_box(&a[2..5])))
@@ -38,5 +33,13 @@ fn day_8(c: &mut Criterion) {
     });
 }
 
-criterion_group!(benches, day_8);
+// time:   [31.684 µs 31.721 µs 31.772 µs]
+fn day8_part1(c: &mut Criterion) {
+    let input = input("resources/day8_input.txt");
+    c.bench_function("day8_part1_low_level", |b| {
+        b.iter(|| day8_part1_low_level(black_box(&input)))
+    });
+}
+
+criterion_group!(benches, day8_part1, day8_utils);
 criterion_main!(benches);
