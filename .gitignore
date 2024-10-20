@@ -2,3 +2,6 @@
 Pipfile.lock
 build
 cmake-build*
+Cargo.lock
+target/
+.DS_Store
