@@ -1,22 +1,44 @@
-use aoc2023::{find_first_loop, find_first_rust_iter};
+use aoc2023::{input};
+use aoc2023::day8::{ day8_part1_low_level};
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-fn find_in_vec_bench(c: &mut Criterion) {
-    let target = 255;
-    let mut vec: Vec<u8> = (0..100_000)
-        .map(|_| {
-            let mut value = rand::random::<u8>();
-            while value == target {
-                value = rand::random::<u8>();
-            }
-            value
-        })
-        .collect();
 
-    vec[95_000] = target;
+const A: u8 = b'A';
+const Z: u8 = b'Z';
 
-    c.bench_function("find_first_rust_iter", |b| { b.iter(|| find_first_rust_iter(black_box(&vec), black_box(target))) });
-    c.bench_function("find_first_loop", |b| { b.iter(|| find_first_loop(black_box(&vec), black_box(target))) });
+// time:   [865.55 ps 870.75 ps 876.74 ps]
+fn word_to_num(input: &[u8]) -> u16 {
+    (((input[0] - A) as u16) << 10) + (((input[1] - A) as u16) << 5) + ((input[2] - A) as u16)
 }
 
-criterion_group!(benches, find_in_vec_bench);
+// time:   [906.72 ps 909.95 ps 913.40 ps]
+fn word_to_num2(input: &[u8]) -> u16 {
+    (((input[0] - A) as u16) * 26 * 26) + (((input[1] - A) as u16) * 26) + ((input[2] - A) as u16)
+}
+
+// time:   [2.4659 ns 2.6554 ns 2.8429 ns]
+fn word_to_num3(first: u8, second: u8, third: u8) -> u16 {
+    (((first - A) as u16) * 26 * 26) + (((second - A) as u16) * 26) + ((third - A) as u16)
+}
+
+// time:   [31.684 µs 31.721 µs 31.772 µs]
+fn day_8(c: &mut Criterion) {
+    let input = input("resources/day8_input.txt");
+    c.bench_function("day8_part1_low_level", |b| {
+        b.iter(|| day8_part1_low_level(black_box(&input)))
+    });
+    let a = [A, A, A, Z, Z, Z];
+    c.bench_function("word_to_num", |b| {
+        b.iter(|| word_to_num(black_box(&a[2..5])))
+    });
+    c.bench_function("word_to_num2", |b| {
+        b.iter(|| word_to_num2(black_box(&a[2..5])))
+    });
+    c.bench_function("word_to_num3", |b| {
+        b.iter(|| word_to_num3(black_box(a[2]), black_box(a[3]), black_box(a[4])))
+    });
+
+}
+
+
+criterion_group!(benches, day_8);
 criterion_main!(benches);
