@@ -1,5 +1,5 @@
-use aoc2023::{input};
-use aoc2023::day8::{ day8_part1_low_level};
+use aoc2023::day8::day8_part1_low_level;
+use aoc2023::input;
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 const A: u8 = b'A';
@@ -36,9 +36,7 @@ fn day_8(c: &mut Criterion) {
     c.bench_function("word_to_num3", |b| {
         b.iter(|| word_to_num3(black_box(a[2]), black_box(a[3]), black_box(a[4])))
     });
-
 }
-
 
 criterion_group!(benches, day_8);
 criterion_main!(benches);
