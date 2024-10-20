@@ -6,16 +6,19 @@ const A: u8 = b'A';
 const Z: u8 = b'Z';
 
 // time:   [865.55 ps 870.75 ps 876.74 ps]
+#[inline(always)]
 fn word_to_num(input: &[u8]) -> u16 {
     (((input[0] - A) as u16) << 10) + (((input[1] - A) as u16) << 5) + ((input[2] - A) as u16)
 }
 
 // time:   [906.72 ps 909.95 ps 913.40 ps]
+#[inline(always)]
 fn word_to_num2(input: &[u8]) -> u16 {
     (((input[0] - A) as u16) * 26 * 26) + (((input[1] - A) as u16) * 26) + ((input[2] - A) as u16)
 }
 
 // time:   [2.4659 ns 2.6554 ns 2.8429 ns]
+#[inline(always)]
 fn word_to_num3(first: u8, second: u8, third: u8) -> u16 {
     (((first - A) as u16) * 26 * 26) + (((second - A) as u16) * 26) + ((third - A) as u16)
 }
