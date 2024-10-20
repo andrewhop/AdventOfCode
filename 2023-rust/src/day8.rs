@@ -62,6 +62,7 @@ mod test {
         let a = [A, A, A, Z, Z, Z];
         assert_eq!(word_to_num(&a[0..3]), 0);
         assert_eq!(word_to_num(&a[1..4]), 25);
-        assert_eq!(word_to_num(&a[3..6]), 17575);
+        assert_eq!(word_to_num(&a[3..6]), 26425);
+        assert_eq!(word_to_num(&a[3..6]) + 1, MAP_SIZE);
     }
 }
