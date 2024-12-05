@@ -95,6 +95,46 @@ pub fn day1_part1_radix(input: &Vec<u8>) -> u32 {
     sum_of_differences as u32
 }
 
+pub fn day1_part1_radix_one_pass(input: &Vec<u8>) -> u32 {
+    let mut buckets: Vec<(u8, u8)> = vec![(0, 0); 100_000 as usize];
+    let ascii_str = std::str::from_utf8(input).expect("input was not UTF8 string");
+    let mut num_pairs = 0;
+    for line in ascii_str.lines() {
+        let mut words = line.split_whitespace();
+        let left = words.next().unwrap().parse::<u32>().unwrap();
+        buckets[left as usize].0 += 1;
+        let right = words.next().unwrap().parse::<u32>().unwrap();
+        buckets[right as usize].1 += 1;
+        num_pairs += 1;
+    }
+
+    let mut left_index: usize = 0;
+    let mut right_index: usize = 0;
+    let mut sum_of_differences = 0;
+
+    let mut pairs = 0;
+    while pairs < num_pairs {
+        pairs += 1;
+        while buckets[left_index].0 == 0 {
+            left_index += 1;
+        }
+        buckets[left_index].0 -= 1;
+
+        while buckets[right_index].1 == 0 {
+            right_index += 1;
+        }
+        buckets[right_index].1 -= 1;
+
+        sum_of_differences += if left_index < right_index {
+            right_index - left_index
+        } else {
+            left_index - right_index
+        };
+    }
+
+    sum_of_differences as u32
+}
+
 pub fn day1_part1_heap(input: &Vec<u8>) -> u32 {
     let mut left_values: BinaryHeap<u32> = BinaryHeap::with_capacity(1001);
     let mut right_values: BinaryHeap<u32> = BinaryHeap::with_capacity(1001);
@@ -225,6 +265,7 @@ mod test {
         let sample = input("resources/day1_sample.txt");
         assert_eq!(day1_part1_vec(&sample), 11);
         assert_eq!(day1_part1_radix(&sample), 11);
+        assert_eq!(day1_part1_radix_one_pass(&sample), 11);
         assert_eq!(day1_part1_multi_pass_fold(&sample), 11);
         assert_eq!(day1_part1_multi_pass_loop(&sample), 11);
         assert_eq!(day1_part1_heap(&sample), 11);
@@ -232,6 +273,7 @@ mod test {
         let input = input("resources/day1_input.txt");
         assert_eq!(day1_part1_vec(&input), 2970687);
         assert_eq!(day1_part1_radix(&input), 2970687);
+        assert_eq!(day1_part1_radix_one_pass(&input), 2970687);
         assert_eq!(day1_part1_multi_pass_fold(&input), 2970687);
         assert_eq!(day1_part1_multi_pass_loop(&input), 2970687);
         assert_eq!(day1_part1_heap(&input), 2970687);

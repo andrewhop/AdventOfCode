@@ -1,7 +1,4 @@
-use aoc2024::day1::{
-    day1_part1_heap, day1_part1_multi_pass_fold, day1_part1_multi_pass_loop, day1_part1_radix,
-    day1_part1_vec, day1_part2,
-};
+use aoc2024::day1::{day1_part1_heap, day1_part1_multi_pass_fold, day1_part1_multi_pass_loop, day1_part1_radix, day1_part1_radix_one_pass, day1_part1_vec, day1_part2};
 use aoc2024::input;
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
@@ -17,6 +14,10 @@ fn day1_bench(c: &mut Criterion) {
     // G4     time:   [124.60 µs 124.63 µs 124.66 µs]
     c.bench_function("day1_part1_radix", |b| {
         b.iter(|| day1_part1_radix(black_box(&input)))
+    });
+
+    c.bench_function("day1_part1_radix_one_pass", |b| {
+        b.iter(|| day1_part1_radix_one_pass(black_box(&input)))
     });
 
     // M1 Mac time:   [665.17 µs 666.50 µs 668.08 µs]
