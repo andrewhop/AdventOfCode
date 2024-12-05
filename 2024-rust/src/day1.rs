@@ -13,11 +13,7 @@ impl Pushable for BinaryHeap<u32> {
         self.push(item);
     }
 }
-fn convert_string_to_vecs<T:Pushable>(
-    input: &Vec<u8>,
-    left_values: &mut T,
-    right_values: &mut T,
-) {
+fn convert_string_to_vecs<T: Pushable>(input: &Vec<u8>, left_values: &mut T, right_values: &mut T) {
     let ascii_str = std::str::from_utf8(input).expect("input was not UTF8 string");
     for line in ascii_str.lines() {
         let mut words = line.split_whitespace();
