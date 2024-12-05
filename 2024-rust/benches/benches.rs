@@ -5,17 +5,21 @@ use criterion::{black_box, criterion_group, criterion_main, Criterion};
 fn day1_bench(c: &mut Criterion) {
     let input = input("resources/day1_input.txt");
     // M1 Mac time:   [50.922 µs 51.235 µs 51.598 µs]
+    // G4     time:   [52.104 µs 52.116 µs 52.127 µs]
     c.bench_function("day1_part1_vec", |b| b.iter(|| day1_part1_vec(black_box(&input))));
 
     // M1 Mac time:   [679.25 µs 681.34 µs 683.46 µs]
+    // G4     time:   [859.89 µs 859.95 µs 860.02 µs]
     c.bench_function("day1_part1_multi_pass", |b| b.iter(|| day1_part1_multi_pass(black_box(&input))));
 
     // M1 Mac time:   [83.837 µs 84.570 µs 85.337 µs]
+    // G4     time:   [74.908 µs 74.932 µs 74.961 µs]
     c.bench_function("day1_part1_heap", |b| {
         b.iter(|| day1_part1_heap(black_box(&input)))
     });
 
     // M1 Mac time:   [79.223 µs 79.690 µs 80.180 µs]
+    // G4     time:   [78.985 µs 79.012 µs 79.041 µs]
     c.bench_function("day1_part2", |b| b.iter(|| day1_part2(black_box(&input))));
 }
 
