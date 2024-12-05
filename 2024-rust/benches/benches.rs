@@ -1,4 +1,8 @@
-use aoc2024::day1::{day1_part1_heap, day1_part1_multi_pass_fold, day1_part1_multi_pass_loop, day1_part1_radix, day1_part1_radix_one_pass, day1_part1_vec, day1_part2};
+use aoc2024::day1::{
+    day1_part1_heap, day1_part1_multi_pass_fold, day1_part1_multi_pass_loop, day1_part1_radix,
+    day1_part1_radix_one_pass, day1_part1_vec, day1_part2,
+};
+use aoc2024::day2::{day2_part1_clean, day2_part1_gross};
 use aoc2024::input;
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
@@ -45,5 +49,19 @@ fn day1_bench(c: &mut Criterion) {
     c.bench_function("day1_part2", |b| b.iter(|| day1_part2(black_box(&input))));
 }
 
-criterion_group!(benches, day1_bench);
+fn day2_bench(c: &mut Criterion) {
+    let input = input("resources/day2_input.txt");
+
+    // M1 time:   [42.557 µs 42.628 µs 42.707 µs]
+    // G4 time:
+    c.bench_function("day2_part1_gross", |b| {
+        b.iter(|| day2_part1_gross(black_box(&input)))
+    });
+
+    c.bench_function("day2_part1_clean", |b| {
+        b.iter(|| day2_part1_clean(black_box(&input)))
+    });
+}
+
+criterion_group!(benches, day1_bench, day2_bench);
 criterion_main!(benches);
