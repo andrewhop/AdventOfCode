@@ -55,7 +55,7 @@ pub fn day1_part1_heap(input: &Vec<u8>) -> i64 {
     sum_of_differences
 }
 
-pub fn day1_part1_multi_pass(input: &Vec<u8>) -> i64 {
+pub fn day1_part1_multi_pass_fold(input: &Vec<u8>) -> i64 {
     let mut left_values: Vec<i64> = Vec::with_capacity(1001);
     let mut right_values: Vec<i64> = Vec::with_capacity(1001);
     let ascii_str = std::str::from_utf8(input).expect("input was not UTF8 string");
@@ -110,6 +110,57 @@ pub fn day1_part1_multi_pass(input: &Vec<u8>) -> i64 {
     sum_of_differences
 }
 
+pub fn day1_part1_multi_pass_loop(input: &Vec<u8>) -> i64 {
+    let mut left_values: Vec<i64> = Vec::with_capacity(1001);
+    let mut right_values: Vec<i64> = Vec::with_capacity(1001);
+    let ascii_str = std::str::from_utf8(input).expect("input was not UTF8 string");
+    for line in ascii_str.lines() {
+        let mut words = line.split_whitespace();
+        if let (Some(left_num), Some(right_num)) = (words.next(), words.next()) {
+            match left_num.parse::<i64>() {
+                Ok(num) => left_values.push(num),
+                Err(e) => panic!("Failed to convert: {}, {}", left_num, e),
+            }
+            match right_num.parse::<i64>() {
+                Ok(num) => right_values.push(num),
+                Err(e) => panic!("Failed to convert: {}, {}", right_num, e),
+            }
+        } else {
+            panic!("Line does not contain exactly two words: {}", line);
+        }
+    }
+    let mut sum_of_differences = 0;
+    while !left_values.is_empty() {
+        let mut left_index = 0;
+        let mut left_value = left_values[left_index];
+        for (index, value) in left_values.iter().enumerate() {
+            if *value < left_value {
+                left_value = *value;
+                left_index = index;
+            }
+        }
+        let last_left = left_values.pop().unwrap();
+        if left_index < left_values.len() {
+            left_values[left_index] = last_left;
+        }
+        let mut right_index = 0;
+        let mut right_value = right_values[right_index];
+        for (index, value) in right_values.iter().enumerate() {
+            if *value < right_value {
+                right_value = *value;
+                right_index = index;
+            }
+        }
+        let last_right = right_values.pop().unwrap();
+        if right_index < right_values.len() {
+            right_values[right_index] = last_right;
+        }
+        sum_of_differences += (left_value - right_value).abs();
+
+    }
+    sum_of_differences
+}
+
 pub fn day1_part2(input: &Vec<u8>) -> i64 {
     let mut left: Vec<i64> = Vec::new();
     let mut right_map: HashMap<i64, u16> = HashMap::new();
@@ -149,12 +200,14 @@ mod test {
     fn part1_tests() {
         let sample = input("resources/day1_sample.txt");
         assert_eq!(day1_part1_vec(&sample), 11);
-        assert_eq!(day1_part1_multi_pass(&sample), 11);
+        assert_eq!(day1_part1_multi_pass_fold(&sample), 11);
+        assert_eq!(day1_part1_multi_pass_loop(&sample), 11);
         assert_eq!(day1_part1_heap(&sample), 11);
 
         let input = input("resources/day1_input.txt");
         assert_eq!(day1_part1_vec(&input), 2970687);
-        assert_eq!(day1_part1_multi_pass(&input), 2970687);
+        assert_eq!(day1_part1_multi_pass_fold(&input), 2970687);
+        assert_eq!(day1_part1_multi_pass_loop(&input), 2970687);
         assert_eq!(day1_part1_heap(&input), 2970687);
     }
 
