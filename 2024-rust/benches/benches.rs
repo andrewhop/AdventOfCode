@@ -9,9 +9,11 @@ fn day1_bench(c: &mut Criterion) {
     c.bench_function("day1_part1_vec", |b| b.iter(|| day1_part1_vec(black_box(&input))));
 
     // M1 Mac time:   [666.92 µs 669.47 µs 673.81 µs]
-    // G4     time:   [859.89 µs 859.95 µs 860.02 µs]
+    // G4     time:   [858.26 µs 858.28 µs 858.31 µs]
     c.bench_function("day1_part1_multi_pass_fold", |b| b.iter(|| day1_part1_multi_pass_fold(black_box(&input))));
 
+    // M1 Mac time:   [708.29 µs 710.00 µs 712.01 µs]
+    // G4     time:   [843.05 µs 843.14 µs 843.23 µs]
     c.bench_function("day1_part1_multi_pass_loop", |b| b.iter(|| day1_part1_multi_pass_loop(black_box(&input))));
 
 
