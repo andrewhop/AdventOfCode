@@ -3,7 +3,7 @@ use aoc2024::day1::{
     day1_part1_radix_one_pass, day1_part1_vec, day1_part2,
 };
 use aoc2024::day2::{day2_part1_clean, day2_part1_gross};
-use aoc2024::day3::{day3_part1_lazy_regex, day3_part1_regex};
+use aoc2024::day3::{day3_part1_lazy_regex, day3_part1_regex, day3_part2_regex};
 use aoc2024::input;
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
@@ -77,6 +77,12 @@ fn day3_bench(c: &mut Criterion) {
     // G4 time:   [180.92 µs 180.93 µs 180.95 µs]
     c.bench_function("day3_part1_lazy_regex", |b| {
         b.iter(|| day3_part1_lazy_regex(black_box(&input)))
+    });
+
+    // M1 time:   [190.88 µs 191.48 µs 192.12 µs]
+    // G4 time:
+    c.bench_function("day3_part2_regex", |b| {
+        b.iter(|| day3_part2_regex(black_box(&input)))
     });
 }
 
