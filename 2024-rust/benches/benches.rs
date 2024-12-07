@@ -68,13 +68,13 @@ fn day3_bench(c: &mut Criterion) {
     let input = input("resources/day3_input.txt");
 
     // M1 time:   [289.80 µs 292.89 µs 296.03 µs]
-    // G4 time:
+    // G4 time:   [362.81 µs 363.83 µs 364.87 µs]
     c.bench_function("day3_part1_regex", |b| {
         b.iter(|| day3_part1_regex(black_box(&input)))
     });
 
     // M1 time:   [145.63 µs 146.65 µs 147.72 µs]
-    // G4
+    // G4 time:   [180.92 µs 180.93 µs 180.95 µs]
     c.bench_function("day3_part1_lazy_regex", |b| {
         b.iter(|| day3_part1_lazy_regex(black_box(&input)))
     });
