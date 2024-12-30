@@ -3,6 +3,7 @@ use aoc2024::day1::{
     day1_part1_radix_one_pass, day1_part1_vec, day1_part2,
 };
 use aoc2024::day2::{day2_part1_clean, day2_part1_gross};
+use aoc2024::day22::day22_part1;
 use aoc2024::day3::{day3_part1_lazy_regex, day3_part1_regex, day3_part2_regex};
 use aoc2024::day4::{day4_part1, day4_part2};
 use aoc2024::day5::day5_part1;
@@ -110,5 +111,21 @@ fn day5_bench(c: &mut Criterion) {
     c.bench_function("day5_part1", |b| b.iter(|| day5_part1(black_box(&input))));
 }
 
-criterion_group!(benches, day1_bench, day2_bench, day3_bench, day4_bench, day5_bench);
+fn day22_bench(c: &mut Criterion) {
+    let input = input("resources/day22_input.txt");
+
+    // M1 time:   [7.1304 ms 7.1549 ms 7.1811 ms]
+    // G4 time:
+    c.bench_function("day22_part1", |b| b.iter(|| day22_part1(black_box(&input))));
+}
+
+criterion_group!(
+    benches,
+    day1_bench,
+    day2_bench,
+    day3_bench,
+    day4_bench,
+    day5_bench,
+    day22_bench,
+);
 criterion_main!(benches);
