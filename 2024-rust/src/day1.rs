@@ -96,7 +96,7 @@ pub fn day1_part1_radix(input: &Vec<u8>) -> u32 {
 }
 
 pub fn day1_part1_radix_one_pass(input: &Vec<u8>) -> u32 {
-    let mut buckets: Vec<(u8, u8)> = vec![(0, 0); 100_000 as usize];
+    let mut buckets: Vec<(u8, u8)> = vec![(0, 0); 100_000_usize];
     let ascii_str = std::str::from_utf8(input).expect("input was not UTF8 string");
     let mut num_pairs = 0;
     for line in ascii_str.lines() {

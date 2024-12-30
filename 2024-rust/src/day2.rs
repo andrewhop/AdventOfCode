@@ -11,7 +11,6 @@ enum State {
 fn check_all_safe(line: &str) -> bool {
     let mut numbers = line
         .split_whitespace()
-        .into_iter()
         .map(|s| s.parse::<u32>().unwrap());
     let mut prev = numbers.next().unwrap();
     let mut overall_direction = Unknown;
@@ -28,10 +27,8 @@ fn check_all_safe(line: &str) -> bool {
         }
         if overall_direction == Unknown {
             overall_direction = direction;
-        } else {
-            if overall_direction != direction {
-                return false;
-            }
+        } else if overall_direction != direction {
+            return false;
         }
         prev = number;
     }
@@ -53,7 +50,7 @@ pub fn day2_part1_gross(input: &Vec<u8>) -> u32 {
     let ascii_str = std::str::from_utf8(input).expect("input was not UTF8 string");
     let mut safe = 0;
     'line_loop: for line in ascii_str.lines() {
-        let mut words = line.split_whitespace().into_iter();
+        let mut words = line.split_whitespace();
         let mut previous: u32 = words.next().unwrap().parse::<u32>().unwrap();
         let mut direction = Unknown;
         for word in words {
@@ -91,7 +88,6 @@ pub fn day2_part1_gross(input: &Vec<u8>) -> u32 {
 fn check_all_safe_but_one_core(line: &str, test_direction: State, skip_first: bool) -> bool {
     let mut numbers = line
         .split_whitespace()
-        .into_iter()
         .map(|s| s.parse::<u32>().unwrap());
     let mut prev = numbers.next().unwrap();
     if skip_first {
@@ -125,7 +121,7 @@ fn check_all_safe_but_one(line: &str) -> bool {
             }
         }
     }
-    return false;
+    false
 }
 
 pub fn day2_part2(input: &Vec<u8>) -> u32 {

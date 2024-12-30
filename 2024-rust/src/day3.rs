@@ -24,7 +24,7 @@ pub fn day3_part1_regex(input: &Vec<u8>) -> u32 {
 static MUL_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(PART1_REGEX_STRING).unwrap());
 
 pub fn day3_part1_lazy_regex(input: &Vec<u8>) -> u32 {
-    day3_part1_regex_core(input, &*MUL_REGEX)
+    day3_part1_regex_core(input, &MUL_REGEX)
 }
 
 const PART2_REGEX_STRING: &str = r"do\(\)|don't\(\)|mul\((?<left>\d{1,3}),(?<right>\d{1,3})\)";
@@ -38,18 +38,16 @@ pub fn day3_part2_regex(input: &Vec<u8>) -> u32 {
         .map(|mul| {
             if &mul[0] == "do()" {
                 mul_on = true;
-                return 0;
+                0
             } else if &mul[0] == "don't()" {
                 mul_on = false;
                 return 0;
+            } else if mul_on {
+                let left = mul.name("left").unwrap().as_str().parse::<u32>().unwrap();
+                let right = mul.name("right").unwrap().as_str().parse::<u32>().unwrap();
+                return left * right;
             } else {
-                if mul_on {
-                    let left = mul.name("left").unwrap().as_str().parse::<u32>().unwrap();
-                    let right = mul.name("right").unwrap().as_str().parse::<u32>().unwrap();
-                    return left * right;
-                } else {
-                    return 0;
-                }
+                return 0;
             }
         })
         .sum();

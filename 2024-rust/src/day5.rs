@@ -31,18 +31,13 @@ pub fn day5_part1(input: &Vec<u8>) -> u32 {
     let mut parsing_rules = true;
     let mut sum = 0;
     for line in lines {
-        if line.len() == 0 {
+        if line.is_empty() {
             parsing_rules = false;
         } else if parsing_rules {
             let before = line[0..2].parse::<u32>().unwrap();
             let after = line[3..5].parse::<u32>().unwrap();
             rules.entry(before).or_default().push(after);
-        } else {
-            match is_update_valid(line, &mut rules) {
-                Some(x) => sum += x,
-                None => {}
-            }
-        }
+        } else if let Some(x) = is_update_valid(line, &mut rules) { sum += x }
     }
     sum
 }
@@ -70,7 +65,7 @@ pub fn day5_part2(input: &Vec<u8>) -> u32 {
     let mut parsing_rules = true;
     let mut sum = 0;
     for line in lines {
-        if line.len() == 0 {
+        if line.is_empty() {
             parsing_rules = false;
         } else if parsing_rules {
             let before = line[0..2].parse::<u32>().unwrap();

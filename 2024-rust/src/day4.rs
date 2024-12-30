@@ -78,7 +78,7 @@ fn is_mas_mas(grid: &Vec<&str>, start_col: i32, start_row: i32) -> bool {
             return true;
         }
     }
-    return false;
+    false
 }
 
 pub fn day4_part2(input: &Vec<u8>) -> u32 {
