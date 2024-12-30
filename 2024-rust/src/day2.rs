@@ -53,27 +53,31 @@ pub fn day2_part1_gross(input: &[u8]) -> u32 {
         let mut direction = Unknown;
         for word in words {
             let num = word.parse::<u32>().unwrap();
-            if previous == num {
-                continue 'line_loop;
-            } else if previous > num {
-                if direction == Unknown {
-                    direction = Decrementing;
-                } else if direction == Incrementing {
+            match previous.cmp(&num) {
+                Ordering::Equal => {
                     continue 'line_loop;
                 }
-                let diff = previous - num;
-                if diff > 3 {
-                    continue 'line_loop;
+                Ordering::Less => {
+                    if direction == Unknown {
+                        direction = Incrementing;
+                    } else if direction == Decrementing {
+                        continue 'line_loop;
+                    }
+                    let diff = num - previous;
+                    if diff > 3 {
+                        continue 'line_loop;
+                    }
                 }
-            } else if previous < num {
-                if direction == Unknown {
-                    direction = Incrementing;
-                } else if direction == Decrementing {
-                    continue 'line_loop;
-                }
-                let diff = num - previous;
-                if diff > 3 {
-                    continue 'line_loop;
+                Ordering::Greater => {
+                    if direction == Unknown {
+                        direction = Decrementing;
+                    } else if direction == Incrementing {
+                        continue 'line_loop;
+                    }
+                    let diff = previous - num;
+                    if diff > 3 {
+                        continue 'line_loop;
+                    }
                 }
             }
             previous = num;
