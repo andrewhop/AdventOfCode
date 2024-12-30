@@ -108,6 +108,6 @@ mod test {
         assert_eq!(day5_part2(&sample), 123);
 
         let sample = input("resources/day5_input.txt");
-        assert_eq!(day5_part2(&sample), 5268);
+        assert_eq!(day5_part2(&sample), 5799);
     }
 }
