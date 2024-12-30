@@ -18,7 +18,7 @@ fn is_xmas(grid: &Vec<&str>, start_col: i32, start_row: i32, col_dir: i32, row_d
     true
 }
 
-pub fn day4_part1(input: &Vec<u8>) -> u32 {
+pub fn day4_part1(input: &[u8]) -> u32 {
     let ascii_str = std::str::from_utf8(input).expect("input was not UTF8 string");
     let grid: Vec<_> = ascii_str.lines().collect();
     let mut xmas_count = 0;
@@ -81,7 +81,7 @@ fn is_mas_mas(grid: &Vec<&str>, start_col: i32, start_row: i32) -> bool {
     false
 }
 
-pub fn day4_part2(input: &Vec<u8>) -> u32 {
+pub fn day4_part2(input: &[u8]) -> u32 {
     let ascii_str = std::str::from_utf8(input).expect("input was not UTF8 string");
     let grid: Vec<_> = ascii_str.lines().collect();
     let mut xmas_count = 0;

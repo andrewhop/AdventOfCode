@@ -33,7 +33,7 @@ fn check_all_safe(line: &str) -> bool {
     true
 }
 
-pub fn day2_part1_clean(input: &Vec<u8>) -> u32 {
+pub fn day2_part1_clean(input: &[u8]) -> u32 {
     let ascii_str = std::str::from_utf8(input).expect("input was not UTF8 string");
     let mut safe = 0;
     for line in ascii_str.lines() {
@@ -44,7 +44,7 @@ pub fn day2_part1_clean(input: &Vec<u8>) -> u32 {
     safe
 }
 
-pub fn day2_part1_gross(input: &Vec<u8>) -> u32 {
+pub fn day2_part1_gross(input: &[u8]) -> u32 {
     let ascii_str = std::str::from_utf8(input).expect("input was not UTF8 string");
     let mut safe = 0;
     'line_loop: for line in ascii_str.lines() {
@@ -120,7 +120,7 @@ fn check_all_safe_but_one(line: &str) -> bool {
     false
 }
 
-pub fn day2_part2(input: &Vec<u8>) -> u32 {
+pub fn day2_part2(input: &[u8]) -> u32 {
     let ascii_str = std::str::from_utf8(input).expect("input was not UTF8 string");
     let mut safe = 0;
     for line in ascii_str.lines() {

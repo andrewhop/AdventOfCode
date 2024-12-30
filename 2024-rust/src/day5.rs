@@ -23,7 +23,7 @@ pub fn is_update_valid(line: &str, rules: &mut HashMap<u32, Vec<u32>>) -> Option
     Some(number)
 }
 
-pub fn day5_part1(input: &Vec<u8>) -> u32 {
+pub fn day5_part1(input: &[u8]) -> u32 {
     let ascii_str = std::str::from_utf8(input).expect("input was not UTF8 string");
     let lines = ascii_str.lines();
 
@@ -37,7 +37,9 @@ pub fn day5_part1(input: &Vec<u8>) -> u32 {
             let before = line[0..2].parse::<u32>().unwrap();
             let after = line[3..5].parse::<u32>().unwrap();
             rules.entry(before).or_default().push(after);
-        } else if let Some(x) = is_update_valid(line, &mut rules) { sum += x }
+        } else if let Some(x) = is_update_valid(line, &mut rules) {
+            sum += x
+        }
     }
     sum
 }
@@ -57,7 +59,7 @@ fn fix_line(line: &str, rules: &mut HashMap<u32, Vec<u32>>) -> u32 {
     });
     pages_to_print[pages_to_print.len() / 2]
 }
-pub fn day5_part2(input: &Vec<u8>) -> u32 {
+pub fn day5_part2(input: &[u8]) -> u32 {
     let ascii_str = std::str::from_utf8(input).expect("input was not UTF8 string");
     let lines = ascii_str.lines();
 

@@ -1,7 +1,7 @@
 use once_cell::sync::Lazy;
 use regex::Regex;
 
-fn day3_part1_regex_core(input: &Vec<u8>, regex: &Regex) -> u32 {
+fn day3_part1_regex_core(input: &[u8], regex: &Regex) -> u32 {
     let ascii_str = std::str::from_utf8(input).expect("input was not UTF8 string");
     let result = regex
         .captures_iter(ascii_str)
@@ -16,21 +16,21 @@ fn day3_part1_regex_core(input: &Vec<u8>, regex: &Regex) -> u32 {
 
 const PART1_REGEX_STRING: &str = r"mul\((?<left>\d{1,3}),(?<right>\d{1,3})\)";
 
-pub fn day3_part1_regex(input: &Vec<u8>) -> u32 {
+pub fn day3_part1_regex(input: &[u8]) -> u32 {
     let mul_regex = Regex::new(PART1_REGEX_STRING).unwrap();
     day3_part1_regex_core(input, &mul_regex)
 }
 
 static MUL_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(PART1_REGEX_STRING).unwrap());
 
-pub fn day3_part1_lazy_regex(input: &Vec<u8>) -> u32 {
+pub fn day3_part1_lazy_regex(input: &[u8]) -> u32 {
     day3_part1_regex_core(input, &MUL_REGEX)
 }
 
 const PART2_REGEX_STRING: &str = r"do\(\)|don't\(\)|mul\((?<left>\d{1,3}),(?<right>\d{1,3})\)";
 static PART2_MUL_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(PART2_REGEX_STRING).unwrap());
 
-pub fn day3_part2_regex(input: &Vec<u8>) -> u32 {
+pub fn day3_part2_regex(input: &[u8]) -> u32 {
     let ascii_str = std::str::from_utf8(input).expect("input was not UTF8 string");
     let mut mul_on = true;
     let result = PART2_MUL_REGEX

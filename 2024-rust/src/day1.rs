@@ -13,7 +13,7 @@ impl Pushable for BinaryHeap<u32> {
         self.push(item);
     }
 }
-fn convert_string_to_vecs<T: Pushable>(input: &Vec<u8>, left_values: &mut T, right_values: &mut T) {
+fn convert_string_to_vecs<T: Pushable>(input: &[u8], left_values: &mut T, right_values: &mut T) {
     let ascii_str = std::str::from_utf8(input).expect("input was not UTF8 string");
     for line in ascii_str.lines() {
         let mut words = line.split_whitespace();
@@ -24,7 +24,7 @@ fn convert_string_to_vecs<T: Pushable>(input: &Vec<u8>, left_values: &mut T, rig
     }
 }
 
-pub fn day1_part1_vec(input: &Vec<u8>) -> u32 {
+pub fn day1_part1_vec(input: &[u8]) -> u32 {
     let mut left_values: Vec<u32> = Vec::with_capacity(1001);
     let mut right_values: Vec<u32> = Vec::with_capacity(1001);
     convert_string_to_vecs(input, &mut left_values, &mut right_values);
@@ -38,7 +38,7 @@ pub fn day1_part1_vec(input: &Vec<u8>) -> u32 {
     sum_of_differences
 }
 
-pub fn day1_part1_radix(input: &Vec<u8>) -> u32 {
+pub fn day1_part1_radix(input: &[u8]) -> u32 {
     let mut left_values: Vec<u32> = Vec::with_capacity(1001);
     let mut right_values: Vec<u32> = Vec::with_capacity(1001);
     let ascii_str = std::str::from_utf8(input).expect("input was not UTF8 string");
@@ -95,7 +95,7 @@ pub fn day1_part1_radix(input: &Vec<u8>) -> u32 {
     sum_of_differences as u32
 }
 
-pub fn day1_part1_radix_one_pass(input: &Vec<u8>) -> u32 {
+pub fn day1_part1_radix_one_pass(input: &[u8]) -> u32 {
     let mut buckets: Vec<(u8, u8)> = vec![(0, 0); 100_000_usize];
     let ascii_str = std::str::from_utf8(input).expect("input was not UTF8 string");
     let mut num_pairs = 0;
@@ -135,7 +135,7 @@ pub fn day1_part1_radix_one_pass(input: &Vec<u8>) -> u32 {
     sum_of_differences as u32
 }
 
-pub fn day1_part1_heap(input: &Vec<u8>) -> u32 {
+pub fn day1_part1_heap(input: &[u8]) -> u32 {
     let mut left_values: BinaryHeap<u32> = BinaryHeap::with_capacity(1001);
     let mut right_values: BinaryHeap<u32> = BinaryHeap::with_capacity(1001);
     convert_string_to_vecs(input, &mut left_values, &mut right_values);
@@ -152,7 +152,7 @@ pub fn day1_part1_heap(input: &Vec<u8>) -> u32 {
     sum_of_differences
 }
 
-pub fn day1_part1_multi_pass_fold(input: &Vec<u8>) -> u32 {
+pub fn day1_part1_multi_pass_fold(input: &[u8]) -> u32 {
     let mut left_values: Vec<u32> = Vec::with_capacity(1001);
     let mut right_values: Vec<u32> = Vec::with_capacity(1001);
     convert_string_to_vecs(input, &mut left_values, &mut right_values);
@@ -195,7 +195,7 @@ pub fn day1_part1_multi_pass_fold(input: &Vec<u8>) -> u32 {
     sum_of_differences
 }
 
-pub fn day1_part1_multi_pass_loop(input: &Vec<u8>) -> u32 {
+pub fn day1_part1_multi_pass_loop(input: &[u8]) -> u32 {
     let mut left_values: Vec<u32> = Vec::with_capacity(1001);
     let mut right_values: Vec<u32> = Vec::with_capacity(1001);
     convert_string_to_vecs(input, &mut left_values, &mut right_values);
@@ -234,7 +234,7 @@ pub fn day1_part1_multi_pass_loop(input: &Vec<u8>) -> u32 {
     sum_of_differences
 }
 
-pub fn day1_part2(input: &Vec<u8>) -> u32 {
+pub fn day1_part2(input: &[u8]) -> u32 {
     let mut left_values: Vec<u32> = Vec::new();
     let mut right_map: HashMap<u32, u16> = HashMap::new();
     let ascii_str = std::str::from_utf8(input).expect("input was not UTF8 string");
