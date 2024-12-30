@@ -4,6 +4,7 @@ use aoc2024::day1::{
 };
 use aoc2024::day2::{day2_part1_clean, day2_part1_gross};
 use aoc2024::day3::{day3_part1_lazy_regex, day3_part1_regex, day3_part2_regex};
+use aoc2024::day5::day5_part1;
 use aoc2024::input;
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
@@ -59,6 +60,8 @@ fn day2_bench(c: &mut Criterion) {
         b.iter(|| day2_part1_gross(black_box(&input)))
     });
 
+    // M1 time:   [50.909 µs 51.296 µs 51.706 µs]
+    // G4 time:
     c.bench_function("day2_part1_clean", |b| {
         b.iter(|| day2_part1_clean(black_box(&input)))
     });
@@ -86,5 +89,13 @@ fn day3_bench(c: &mut Criterion) {
     });
 }
 
-criterion_group!(benches, day1_bench, day2_bench, day3_bench);
+fn day5_bench(c: &mut Criterion) {
+    let input = input("resources/day5_input.txt");
+
+    // M1 time:   [42.557 µs 42.628 µs 42.707 µs]
+    // G4 time:
+    c.bench_function("day5_part1", |b| b.iter(|| day5_part1(black_box(&input))));
+}
+
+criterion_group!(benches, day1_bench, day2_bench, day3_bench, day5_bench);
 criterion_main!(benches);
