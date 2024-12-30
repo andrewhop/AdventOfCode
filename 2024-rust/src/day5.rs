@@ -78,7 +78,7 @@ pub fn day5_part2(input: &Vec<u8>) -> u32 {
             rules.entry(before).or_default().push(after);
         } else {
             match is_update_valid(line, &mut rules) {
-                Some(x) => {}
+                Some(_) => {}
                 None => {
                     sum += fix_line(line, &mut rules);
                 }
