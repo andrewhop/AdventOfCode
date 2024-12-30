@@ -9,9 +9,7 @@ enum State {
 }
 
 fn check_all_safe(line: &str) -> bool {
-    let mut numbers = line
-        .split_whitespace()
-        .map(|s| s.parse::<u32>().unwrap());
+    let mut numbers = line.split_whitespace().map(|s| s.parse::<u32>().unwrap());
     let mut prev = numbers.next().unwrap();
     let mut overall_direction = Unknown;
     for number in numbers {
@@ -86,9 +84,7 @@ pub fn day2_part1_gross(input: &Vec<u8>) -> u32 {
 }
 
 fn check_all_safe_but_one_core(line: &str, test_direction: State, skip_first: bool) -> bool {
-    let mut numbers = line
-        .split_whitespace()
-        .map(|s| s.parse::<u32>().unwrap());
+    let mut numbers = line.split_whitespace().map(|s| s.parse::<u32>().unwrap());
     let mut prev = numbers.next().unwrap();
     if skip_first {
         prev = numbers.next().unwrap();
@@ -192,6 +188,6 @@ mod test {
         let input = input("resources/day2_input.txt");
         // 406 too low
         // 547 wrong
-        assert_eq!(day2_part2(&input), 547);
+        assert_eq!(day2_part2(&input), 418);
     }
 }
