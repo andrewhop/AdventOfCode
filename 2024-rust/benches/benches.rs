@@ -3,7 +3,10 @@ use aoc2024::day1::{
     day1_part1_radix_one_pass, day1_part1_vec, day1_part2,
 };
 use aoc2024::day2::{day2_part1_clean, day2_part1_gross};
-use aoc2024::day22::day22_part1;
+use aoc2024::day22::{
+    day22_part1, day22_part2, day22_part2_array, day22_part2_arrayish, day22_part2_std, step,
+    step_shift,
+};
 use aoc2024::day3::{day3_part1_lazy_regex, day3_part1_regex, day3_part2_regex};
 use aoc2024::day4::{day4_part1, day4_part2};
 use aoc2024::day5::day5_part1;
@@ -117,6 +120,32 @@ fn day22_bench(c: &mut Criterion) {
     // M1 time:   [7.1304 ms 7.1549 ms 7.1811 ms]
     // G4 time:
     c.bench_function("day22_part1", |b| b.iter(|| day22_part1(black_box(&input))));
+
+    // M1 time:   [532.01 ms 536.87 ms 542.09 ms]
+    c.bench_function("day22_part2", |b| b.iter(|| day22_part2(black_box(&input))));
+
+    // M1 time:   [565.83 ms 577.63 ms 590.10 ms]
+    c.bench_function("day22_part2_std", |b| {
+        b.iter(|| day22_part2_std(black_box(&input)))
+    });
+
+    // M1 time:   [123.18 ms 123.80 ms 124.45 ms]
+    c.bench_function("day22_part2_arrayish", |b| {
+        b.iter(|| day22_part2_arrayish(black_box(&input)))
+    });
+
+    // M1 time:   [15.171 ms 15.206 ms 15.243 ms]
+    c.bench_function("day22_part2_array", |b| {
+        b.iter(|| day22_part2_array(black_box(&input)))
+    });
+
+    // [471.21 ps 472.68 ps 474.49 ps]
+    c.bench_function("day22_step", |b| b.iter(|| step(black_box(1234))));
+
+    // [517.20 ps 518.33 ps 519.58 ps]
+    c.bench_function("day22_step_shift", |b| {
+        b.iter(|| step_shift(black_box(1234)))
+    });
 }
 
 criterion_group!(
