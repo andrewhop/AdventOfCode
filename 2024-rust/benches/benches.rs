@@ -4,8 +4,8 @@ use aoc2024::day1::{
 };
 use aoc2024::day2::{day2_part1_clean, day2_part1_gross};
 use aoc2024::day22::{
-    day22_part1, day22_part2, day22_part2_array, day22_part2_arrayish, day22_part2_std, step,
-    step_shift,
+    day22_part1, day22_part2, day22_part2_array_native, day22_part2_arrayish, day22_part2_std,
+    step, step_shift,
 };
 use aoc2024::day3::{day3_part1_lazy_regex, day3_part1_regex, day3_part2_regex};
 use aoc2024::day4::{day4_part1, day4_part2};
@@ -134,9 +134,9 @@ fn day22_bench(c: &mut Criterion) {
         b.iter(|| day22_part2_arrayish(black_box(&input)))
     });
 
-    // M1 time:   [15.171 ms 15.206 ms 15.243 ms]
-    c.bench_function("day22_part2_array", |b| {
-        b.iter(|| day22_part2_array(black_box(&input)))
+    // M1 time:   [13.750 ms 13.804 ms 13.867 ms]
+    c.bench_function("day22_part2_array_native", |b| {
+        b.iter(|| day22_part2_array_native(black_box(&input)))
     });
 
     // [471.21 ps 472.68 ps 474.49 ps]
