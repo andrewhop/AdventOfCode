@@ -1,5 +1,5 @@
 use std::collections::{HashMap, HashSet};
-use std::str::Lines;
+use std::slice::Split;
 
 pub fn day22_part1(input: &[u8]) -> u64 {
     let ascii_str = std::str::from_utf8(input).expect("input was not UTF8 string");
@@ -14,18 +14,23 @@ pub fn day22_part1(input: &[u8]) -> u64 {
     sum
 }
 
-fn get_buyer_or_zero(iterator: &mut Lines) -> u64 {
+fn get_buyer_or_zero(iterator: &mut Split<u8, fn(&u8) -> bool>) -> u64 {
     let seed = iterator.next();
     match seed {
-        Some(seed) => seed.parse::<u64>().expect("invalid seed"),
+        Some(seed) => {
+            let mut result: u64 = 0;
+            for digit in seed {
+                result = result * 10 + (digit - b'0') as u64;
+            }
+            result
+        }
         None => 0,
     }
 }
 
 pub fn day22_part1_simd(input: &[u8]) -> u64 {
-    let ascii_str = std::str::from_utf8(input).expect("input was not UTF8 string");
     let mut sum: u64 = 0;
-    let mut line_iterator = ascii_str.lines();
+    let mut line_iterator: Split<u8, fn(&u8) -> bool> = input.split(|&c| c == b'\n');
     loop {
         let mut buyer1 = get_buyer_or_zero(&mut line_iterator);
         let mut buyer2 = get_buyer_or_zero(&mut line_iterator);
@@ -47,6 +52,7 @@ const M: u64 = 16777216 - 1;
 // fn part1_simd(mut p0: u32, mut p1: u32, mut p2: u32, mut p3: u32) -> (u32, u32, u32, u32) {
 //     (step(p0), step(p1), step(p2), step(p3))
 // }
+
 fn part1_simd(mut p0: u64, mut p1: u64, mut p2: u64, mut p3: u64) -> (u64, u64, u64, u64) {
     p0 ^= (p0 << 6) & M;
     p0 ^= p0 >> 5;
