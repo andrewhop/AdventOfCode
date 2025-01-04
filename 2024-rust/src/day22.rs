@@ -196,7 +196,45 @@ pub fn day22_part2(input: &[u8]) -> u16 {
     overall_max
 }
 
-struct SequenceNum {
+trait SequenceTracker {
+    fn push(&mut self, new: i8);
+    fn to_key(&self) -> usize;
+    fn count(&self) -> usize;
+}
+struct SequenceRing {
+    ring: [i8; 4],
+    pos: usize,
+    count: usize,
+}
+
+impl Default for SequenceRing {
+    fn default() -> Self {
+        SequenceRing {
+            ring: [0, 0, 0, 0],
+            pos: 0,
+            count: 0,
+        }
+    }
+}
+impl SequenceTracker for SequenceRing {
+    fn push(&mut self, new: i8) {
+        self.ring[self.pos] = new + 9;
+        self.pos = (self.pos + 1) % 4;
+        self.count += 1;
+    }
+    fn to_key(&self) -> usize {
+        let mut result = self.ring[self.pos] as usize;
+        result += self.ring[(self.pos + 1) % 4] as usize * 19;
+        result += self.ring[(self.pos + 2) % 4] as usize * usize::pow(19, 2);
+        result += self.ring[(self.pos + 3) % 4] as usize * usize::pow(19, 3);
+        result
+    }
+    fn count(&self) -> usize {
+        self.count
+    }
+}
+
+struct SequenceNums {
     first: i8,
     second: i8,
     third: i8,
@@ -204,9 +242,9 @@ struct SequenceNum {
     count: usize,
 }
 
-impl SequenceNum {
-    fn new() -> SequenceNum {
-        SequenceNum {
+impl Default for SequenceNums {
+    fn default() -> Self {
+        SequenceNums {
             first: 0,
             second: 0,
             third: 0,
@@ -214,6 +252,8 @@ impl SequenceNum {
             count: 0,
         }
     }
+}
+impl SequenceTracker for SequenceNums {
     fn push(&mut self, new: i8) {
         self.fourth = self.third;
         self.third = self.second;
@@ -228,9 +268,15 @@ impl SequenceNum {
         result += self.fourth as usize * usize::pow(19, 3);
         result
     }
+    fn count(&self) -> usize {
+        self.count
+    }
 }
 
-pub fn day22_part2_array_native(input: &[u8]) -> u16 {
+fn day22_part2_array_native_core<S>(input: &[u8]) -> u16
+where
+    S: SequenceTracker + Default,
+{
     let ascii_str = std::str::from_utf8(input).expect("input was not UTF8 string");
 
     let mut overall_results: Vec<u16> = vec![0; MAX_VALUE];
@@ -239,7 +285,7 @@ pub fn day22_part2_array_native(input: &[u8]) -> u16 {
 
     for (id, buyer_seed) in ascii_str.lines().enumerate() {
         let buyer_id = (id + 1) as u16;
-        let mut change_seq = SequenceNum::new();
+        let mut change_seq = S::default();
         let mut next = buyer_seed.parse::<u64>().expect("invalid seed");
         for _ in 0..2_000 {
             let previous_price: i8 = (next % 10) as i8;
@@ -247,7 +293,7 @@ pub fn day22_part2_array_native(input: &[u8]) -> u16 {
             let current_price = (next % 10) as i8;
             let price_diff = current_price - previous_price;
             change_seq.push(price_diff);
-            if change_seq.count >= 4 {
+            if change_seq.count() >= 4 {
                 let sequence_key = change_seq.to_key();
                 if buyer_results[sequence_key] != buyer_id {
                     buyer_results[sequence_key] = buyer_id;
@@ -262,6 +308,13 @@ pub fn day22_part2_array_native(input: &[u8]) -> u16 {
         }
     }
     overall_max
+}
+pub fn day22_part2_array_native_ring(input: &[u8]) -> u16 {
+    day22_part2_array_native_core::<SequenceRing>(input)
+}
+
+pub fn day22_part2_array_native_nums(input: &[u8]) -> u16 {
+    day22_part2_array_native_core::<SequenceNums>(input)
 }
 
 #[cfg(test)]
@@ -398,12 +451,14 @@ mod test {
         assert_eq!(day22_part2(&sample), 23);
         assert_eq!(day22_part2_std(&sample), 23);
         assert_eq!(day22_part2_arrayish(&sample), 23);
-        assert_eq!(day22_part2_array_native(&sample), 23);
+        assert_eq!(day22_part2_array_native_ring(&sample), 23);
+        assert_eq!(day22_part2_array_native_nums(&sample), 23);
 
         let input = input("resources/day22_input.txt");
         // assert_eq!(day22_part2(&input), 1568);
         // assert_eq!(day22_part2_std(&input), 1568);
         assert_eq!(day22_part2_arrayish(&input), 1568);
-        assert_eq!(day22_part2_array_native(&input), 1568);
+        assert_eq!(day22_part2_array_native_ring(&input), 1568);
+        assert_eq!(day22_part2_array_native_nums(&input), 1568);
     }
 }
