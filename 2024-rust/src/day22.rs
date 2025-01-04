@@ -54,8 +54,8 @@ struct ArrayMap {
     values: Vec<u16>,
 }
 
-impl ArrayMap {
-    fn new() -> ArrayMap {
+impl Default for ArrayMap {
+    fn default() -> Self {
         ArrayMap {
             values: vec![0; MAX_VALUE],
         }
@@ -78,8 +78,8 @@ struct ArraySet {
     values: Vec<bool>,
 }
 
-impl ArraySet {
-    fn new() -> ArraySet {
+impl Default for ArraySet {
+    fn default() -> Self {
         ArraySet {
             values: vec![false; MAX_VALUE],
         }
@@ -95,21 +95,17 @@ impl Setish for ArraySet {
     }
 }
 
-fn day22_part2_core<MapFactory, SetFactory>(
-    input: &[u8],
-    map_factory: MapFactory,
-    set_factory: SetFactory,
-) -> u16
+fn day22_part2_core<M, S>(input: &[u8]) -> u16
 where
-    MapFactory: Fn() -> Box<dyn Mapish>,
-    SetFactory: Fn() -> Box<dyn Setish>,
+    M: Mapish + Default,
+    S: Setish + Default,
 {
     let ascii_str = std::str::from_utf8(input).expect("input was not UTF8 string");
-    let mut overall_results = map_factory();
+    let mut overall_results = M::default();
     let mut overall_max: u16 = 0;
 
     for buyer_seed in ascii_str.lines() {
-        let mut buyer_results = set_factory();
+        let mut buyer_results = S::default();
         let mut change_seq = Vec::new();
         let mut next = buyer_seed.parse::<u64>().expect("invalid seed");
         for _ in 0..2_000 {
@@ -137,19 +133,11 @@ where
 }
 
 pub fn day22_part2_std(input: &[u8]) -> u16 {
-    day22_part2_core(
-        input,
-        || Box::new(HashMap::new()),
-        || Box::new(HashSet::new()),
-    )
+    day22_part2_core::<HashMap<Vec<i8>, u16>, HashSet<Vec<i8>>>(input)
 }
 
 pub fn day22_part2_arrayish(input: &[u8]) -> u16 {
-    day22_part2_core(
-        input,
-        || Box::new(ArrayMap::new()),
-        || Box::new(ArraySet::new()),
-    )
+    day22_part2_core::<ArrayMap, ArraySet>(input)
 }
 
 pub fn step(input: u64) -> u64 {
@@ -293,7 +281,7 @@ mod test {
     #[test]
     fn mapish_test() {
         let mut hashmap: HashMap<Vec<i8>, u16> = HashMap::new();
-        let mut arraymap = ArrayMap::new();
+        let mut arraymap = ArrayMap::default();
 
         let mut key = vec![1, 2, 3, 9];
         assert_eq!(
@@ -327,7 +315,7 @@ mod test {
     #[test]
     fn mapish_exhaustive_test() {
         let mut hashmap: HashMap<Vec<i8>, u16> = HashMap::new();
-        let mut arraymap = ArrayMap::new();
+        let mut arraymap = ArrayMap::default();
         let mut key = vec![0, 0, 0, 0];
         for first in -9..9 {
             key[3] = first;
@@ -389,7 +377,7 @@ mod test {
     #[test]
     fn setish_test() {
         let mut hashset: HashSet<Vec<i8>> = HashSet::new();
-        let mut arrayset = ArraySet::new();
+        let mut arrayset = ArraySet::default();
 
         let mut key = vec![1, 2, 3, 4];
         assert_eq!(hashset.contains(&key), arrayset.contains(&key));
