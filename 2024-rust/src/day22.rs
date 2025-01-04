@@ -1,16 +1,75 @@
 use std::collections::{HashMap, HashSet};
+use std::str::Lines;
 
 pub fn day22_part1(input: &[u8]) -> u64 {
     let ascii_str = std::str::from_utf8(input).expect("input was not UTF8 string");
-    let mut sum = 0;
+    let mut sum: u64 = 0;
     for buyer_seed in ascii_str.lines() {
-        let mut next = buyer_seed.parse::<u64>().expect("invalid seed");
+        let mut next = buyer_seed.parse::<u32>().expect("invalid seed");
         for _ in 0..2000 {
             next = step(next);
         }
-        sum += next;
+        sum += next as u64;
     }
     sum
+}
+
+fn get_buyer_or_zero(iterator: &mut Lines) -> u64 {
+    let seed = iterator.next();
+    match seed {
+        Some(seed) => seed.parse::<u64>().expect("invalid seed"),
+        None => 0,
+    }
+}
+
+pub fn day22_part1_simd(input: &[u8]) -> u64 {
+    let ascii_str = std::str::from_utf8(input).expect("input was not UTF8 string");
+    let mut sum: u64 = 0;
+    let mut line_iterator = ascii_str.lines();
+    loop {
+        let mut buyer1 = get_buyer_or_zero(&mut line_iterator);
+        let mut buyer2 = get_buyer_or_zero(&mut line_iterator);
+        let mut buyer3 = get_buyer_or_zero(&mut line_iterator);
+        let mut buyer4 = get_buyer_or_zero(&mut line_iterator);
+        let done = buyer4 == 0;
+        for _ in 0..2000 {
+            (buyer1, buyer2, buyer3, buyer4) = part1_simd(buyer1, buyer2, buyer3, buyer4);
+        }
+        sum += buyer1 + buyer2 + buyer3 + buyer4;
+        if done {
+            break;
+        }
+    }
+    sum
+}
+
+const M: u64 = 16777216 - 1;
+// fn part1_simd(mut p0: u32, mut p1: u32, mut p2: u32, mut p3: u32) -> (u32, u32, u32, u32) {
+//     (step(p0), step(p1), step(p2), step(p3))
+// }
+fn part1_simd(mut p0: u64, mut p1: u64, mut p2: u64, mut p3: u64) -> (u64, u64, u64, u64) {
+    p0 ^= (p0 << 6) & M;
+    p0 ^= p0 >> 5;
+    p0 ^= (p0 << 11) & M;
+    p1 ^= (p1 << 6) & M;
+    p1 ^= p1 >> 5;
+    p1 ^= (p1 << 11) & M;
+    p2 ^= (p2 << 6) & M;
+    p2 ^= p2 >> 5;
+    p2 ^= (p2 << 11) & M;
+    p3 ^= (p3 << 6) & M;
+    p3 ^= p3 >> 5;
+    p3 ^= (p3 << 11) & M;
+    (p0, p1, p2, p3)
+}
+
+const M2: u32 = 16777216 - 1;
+
+pub fn step(mut next: u32) -> u32 {
+    next ^= (next << 6) & M2;
+    next ^= next >> 5;
+    next ^= (next << 11) & M2;
+    next
 }
 
 const MAX_VALUE: usize = usize::pow(19, 4);
@@ -107,7 +166,7 @@ where
     for buyer_seed in ascii_str.lines() {
         let mut buyer_results = S::default();
         let mut change_seq = Vec::new();
-        let mut next = buyer_seed.parse::<u64>().expect("invalid seed");
+        let mut next = buyer_seed.parse::<u32>().expect("invalid seed");
         for _ in 0..2_000 {
             let previous_price: i8 = (next % 10) as i8;
             next = step(next);
@@ -140,20 +199,6 @@ pub fn day22_part2_arrayish(input: &[u8]) -> u16 {
     day22_part2_core::<ArrayMap, ArraySet>(input)
 }
 
-pub fn step(input: u64) -> u64 {
-    let mut next = input;
-    let temp = next * 64;
-    next ^= temp;
-    next %= 16777216;
-    let temp = next / 32;
-    next ^= temp;
-    next %= 16777216;
-    let temp = next * 2048;
-    next ^= temp;
-    next %= 16777216;
-    next
-}
-
 const PRUNE_MASK: u64 = 16777216;
 pub fn step_shift(input: u64) -> u64 {
     let mut next = input;
@@ -171,7 +216,7 @@ pub fn day22_part2(input: &[u8]) -> u16 {
     for buyer_seed in ascii_str.lines() {
         let mut buyer_results: HashSet<Vec<i8>> = HashSet::new();
         let mut change_seq = Vec::new();
-        let mut next = buyer_seed.parse::<u64>().expect("invalid seed");
+        let mut next = buyer_seed.parse::<u32>().expect("invalid seed");
         for _ in 0..2_000 {
             let previous_price: i8 = (next % 10) as i8;
             next = step(next);
@@ -217,8 +262,8 @@ impl SequenceTracker for SequenceRing {
     fn to_key(&self) -> usize {
         let mut result = self.ring[self.pos] as usize;
         result += self.ring[(self.pos + 1) % 4] as usize * 19;
-        result += self.ring[(self.pos + 2) % 4] as usize * usize::pow(19, 2);
-        result += self.ring[(self.pos + 3) % 4] as usize * usize::pow(19, 3);
+        result += self.ring[(self.pos + 2) % 4] as usize * 361; // 19^2
+        result += self.ring[(self.pos + 3) % 4] as usize * 6859; // 19^3
         result
     }
     fn count(&self) -> usize {
@@ -245,8 +290,8 @@ impl SequenceTracker for SequenceNums {
     fn to_key(&self) -> usize {
         let mut result = self.first as usize;
         result += self.second as usize * 19;
-        result += self.third as usize * usize::pow(19, 2);
-        result += self.fourth as usize * usize::pow(19, 3);
+        result += self.third as usize * 361; // 19^2
+        result += self.fourth as usize * 6859; // 19^3
         result
     }
     fn count(&self) -> usize {
@@ -267,7 +312,7 @@ where
     for (id, buyer_seed) in ascii_str.lines().enumerate() {
         let buyer_id = (id + 1) as u16;
         let mut change_seq = S::default();
-        let mut next = buyer_seed.parse::<u64>().expect("invalid seed");
+        let mut next = buyer_seed.parse::<u32>().expect("invalid seed");
         for _ in 0..2_000 {
             let previous_price: i8 = (next % 10) as i8;
             next = step(next);
@@ -307,9 +352,11 @@ mod test {
     fn part1_tests() {
         let sample = input("resources/day22_sample.txt");
         assert_eq!(day22_part1(&sample), 37327623);
+        assert_eq!(day22_part1_simd(&sample), 37327623);
 
         let sample = input("resources/day22_input.txt");
         assert_eq!(day22_part1(&sample), 14082561342);
+        assert_eq!(day22_part1_simd(&sample), 14082561342);
     }
 
     #[test]
