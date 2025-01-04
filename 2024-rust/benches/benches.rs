@@ -4,8 +4,8 @@ use aoc2024::day1::{
 };
 use aoc2024::day2::{day2_part1_clean, day2_part1_gross};
 use aoc2024::day22::{
-    day22_part1, day22_part1_simd, day22_part2, day22_part2_array_native_ring,
-    day22_part2_arrayish, day22_part2_std, step, step_shift,
+    day22_part1, day22_part1_parallel, day22_part1_simd, day22_part1_simdish, day22_part2,
+    day22_part2_array_native_ring, day22_part2_arrayish, day22_part2_std, step, step_shift,
 };
 use aoc2024::day3::{day3_part1_lazy_regex, day3_part1_regex, day3_part2_regex};
 use aoc2024::day4::{day4_part1, day4_part2};
@@ -117,16 +117,28 @@ fn day5_bench(c: &mut Criterion) {
 fn day22_bench(c: &mut Criterion) {
     let input = input("resources/day22_input.txt");
 
-    // M1 time:   [6.1480 ms 6.1656 ms 6.1845 ms]
+    // M1 time:   [1.0701 ms 1.0752 ms 1.0802 ms]
     // G4 time:
     c.bench_function("day22_part1_simple", |b| {
         b.iter(|| day22_part1(black_box(&input)))
     });
 
-    // M1 time:   [2.1393 ms 2.1477 ms 2.1571 ms]
+    // M1 time:   [2.0775 ms 2.0867 ms 2.0976 ms]
+    // G4 time:
+    c.bench_function("day22_part1_simdish", |b| {
+        b.iter(|| day22_part1_simdish(black_box(&input)))
+    });
+
+    // M1 time: time:   [4.1629 ms 4.2006 ms 4.2478 ms]
     // G4 time:
     c.bench_function("day22_part1_simd", |b| {
         b.iter(|| day22_part1_simd(black_box(&input)))
+    });
+
+    // M1 time: time:   [4.1629 ms 4.2006 ms 4.2478 ms]
+    // G4 time:
+    c.bench_function("day22_part1_parallel", |b| {
+        b.iter(|| day22_part1_parallel(black_box(&input)))
     });
 
     // M1 time:   [532.01 ms 536.87 ms 542.09 ms]

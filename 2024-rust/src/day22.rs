@@ -1,19 +1,39 @@
 use std::collections::{HashMap, HashSet};
+use std::simd::num::SimdUint;
+use std::simd::u64x4;
 use std::slice::Split;
 
 pub fn day22_part1(input: &[u8]) -> u64 {
     let ascii_str = std::str::from_utf8(input).expect("input was not UTF8 string");
-    let mut sum: u64 = 0;
-    for buyer_seed in ascii_str.lines() {
-        let mut next = buyer_seed.parse::<u32>().expect("invalid seed");
-        for _ in 0..2000 {
-            next = step(next);
+    let mut seeds: Vec<u64> = ascii_str
+        .lines()
+        .map(|a| a.parse::<u64>().unwrap())
+        .collect();
+    for _ in 0..2000 {
+        for next in seeds.iter_mut() {
+            *next ^= (*next << 6) & M;
+            *next ^= *next >> 5;
+            *next ^= (*next << 11) & M;
         }
-        sum += next as u64;
     }
-    sum
+    seeds.into_iter().sum()
 }
 
+pub fn day22_part1_parallel(input: &[u8]) -> u64 {
+    let ascii_str = std::str::from_utf8(input).expect("input was not UTF8 string");
+    ascii_str
+        .lines()
+        .map(|buyer_seed| {
+            let mut next = buyer_seed.parse::<u64>().expect("invalid seed");
+            for _ in 0..2000 {
+                next ^= (next << 6) & M;
+                next ^= next >> 5;
+                next ^= (next << 11) & M;
+            }
+            next
+        })
+        .sum()
+}
 fn get_buyer_or_zero(iterator: &mut Split<u8, fn(&u8) -> bool>) -> u64 {
     let seed = iterator.next();
     match seed {
@@ -28,7 +48,7 @@ fn get_buyer_or_zero(iterator: &mut Split<u8, fn(&u8) -> bool>) -> u64 {
     }
 }
 
-pub fn day22_part1_simd(input: &[u8]) -> u64 {
+pub fn day22_part1_simdish(input: &[u8]) -> u64 {
     let mut sum: u64 = 0;
     let mut line_iterator: Split<u8, fn(&u8) -> bool> = input.split(|&c| c == b'\n');
     loop {
@@ -38,7 +58,7 @@ pub fn day22_part1_simd(input: &[u8]) -> u64 {
         let mut buyer4 = get_buyer_or_zero(&mut line_iterator);
         let done = buyer4 == 0;
         for _ in 0..2000 {
-            (buyer1, buyer2, buyer3, buyer4) = part1_simd(buyer1, buyer2, buyer3, buyer4);
+            (buyer1, buyer2, buyer3, buyer4) = part1_simdish(buyer1, buyer2, buyer3, buyer4);
         }
         sum += buyer1 + buyer2 + buyer3 + buyer4;
         if done {
@@ -53,7 +73,7 @@ const M: u64 = 16777216 - 1;
 //     (step(p0), step(p1), step(p2), step(p3))
 // }
 
-fn part1_simd(mut p0: u64, mut p1: u64, mut p2: u64, mut p3: u64) -> (u64, u64, u64, u64) {
+fn part1_simdish(mut p0: u64, mut p1: u64, mut p2: u64, mut p3: u64) -> (u64, u64, u64, u64) {
     p0 ^= (p0 << 6) & M;
     p0 ^= p0 >> 5;
     p0 ^= (p0 << 11) & M;
@@ -68,6 +88,26 @@ fn part1_simd(mut p0: u64, mut p1: u64, mut p2: u64, mut p3: u64) -> (u64, u64, 
     p3 ^= (p3 << 11) & M;
     (p0, p1, p2, p3)
 }
+
+pub fn day22_part1_simd(input: &[u8]) -> u64 {
+    let ascii_str = std::str::from_utf8(input).expect("input was not UTF8 string");
+    ascii_str
+        .lines()
+        .map(|line| line.parse::<u64>().expect("invalid seed"))
+        .array_chunks::<4>()
+        .map(|a| {
+            let mut data = u64x4::from_array(a);
+            for _ in 0..2000 {
+                data ^= (data << 6) & MASK;
+                data ^= data >> 5;
+                data ^= (data << 11) & MASK;
+            }
+            data.reduce_sum()
+        })
+        .sum()
+}
+
+const MASK: u64x4 = u64x4::from_array([M, M, M, M]);
 
 const M2: u32 = 16777216 - 1;
 
@@ -359,10 +399,14 @@ mod test {
         let sample = input("resources/day22_sample.txt");
         assert_eq!(day22_part1(&sample), 37327623);
         assert_eq!(day22_part1_simd(&sample), 37327623);
+        assert_eq!(day22_part1_simdish(&sample), 37327623);
+        assert_eq!(day22_part1_parallel(&sample), 37327623);
 
         let sample = input("resources/day22_input.txt");
         assert_eq!(day22_part1(&sample), 14082561342);
         assert_eq!(day22_part1_simd(&sample), 14082561342);
+        assert_eq!(day22_part1_simdish(&sample), 14082561342);
+        assert_eq!(day22_part1_parallel(&sample), 14082561342);
     }
 
     #[test]

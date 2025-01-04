@@ -1,3 +1,6 @@
+#![feature(portable_simd)]
+#![feature(array_chunks)]
+#![feature(iter_array_chunks)]
 pub mod day1;
 pub mod day2;
 pub mod day22;
