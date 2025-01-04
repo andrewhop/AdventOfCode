@@ -201,21 +201,13 @@ trait SequenceTracker {
     fn to_key(&self) -> usize;
     fn count(&self) -> usize;
 }
+#[derive(Default)]
 struct SequenceRing {
     ring: [i8; 4],
     pos: usize,
     count: usize,
 }
 
-impl Default for SequenceRing {
-    fn default() -> Self {
-        SequenceRing {
-            ring: [0, 0, 0, 0],
-            pos: 0,
-            count: 0,
-        }
-    }
-}
 impl SequenceTracker for SequenceRing {
     fn push(&mut self, new: i8) {
         self.ring[self.pos] = new + 9;
@@ -234,24 +226,13 @@ impl SequenceTracker for SequenceRing {
     }
 }
 
+#[derive(Default)]
 struct SequenceNums {
     first: i8,
     second: i8,
     third: i8,
     fourth: i8,
     count: usize,
-}
-
-impl Default for SequenceNums {
-    fn default() -> Self {
-        SequenceNums {
-            first: 0,
-            second: 0,
-            third: 0,
-            fourth: 0,
-            count: 0,
-        }
-    }
 }
 impl SequenceTracker for SequenceNums {
     fn push(&mut self, new: i8) {
