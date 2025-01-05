@@ -117,7 +117,7 @@ fn day5_bench(c: &mut Criterion) {
 fn day22_bench(c: &mut Criterion) {
     let input = input("resources/day22_input.txt");
 
-    // M1 time:   [1.0701 ms 1.0752 ms 1.0802 ms]
+    // M1 time:   [548.27 µs 549.65 µs 551.12 µs]
     // G4 time:
     c.bench_function("day22_part1_simple", |b| {
         b.iter(|| day22_part1(black_box(&input)))

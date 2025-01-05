@@ -5,18 +5,18 @@ use std::slice::Split;
 
 pub fn day22_part1(input: &[u8]) -> u64 {
     let ascii_str = std::str::from_utf8(input).expect("input was not UTF8 string");
-    let mut seeds: Vec<u64> = ascii_str
+    let mut seeds: Vec<u32> = ascii_str
         .lines()
-        .map(|a| a.parse::<u64>().unwrap())
+        .map(|a| a.parse::<u32>().unwrap())
         .collect();
     for _ in 0..2000 {
         for next in seeds.iter_mut() {
-            *next ^= (*next << 6) & M;
+            *next ^= (*next << 6) & M2;
             *next ^= *next >> 5;
-            *next ^= (*next << 11) & M;
+            *next ^= (*next << 11) & M2;
         }
     }
-    seeds.into_iter().sum()
+    seeds.into_iter().map(|a| a as u64).sum()
 }
 
 pub fn day22_part1_parallel(input: &[u8]) -> u64 {
