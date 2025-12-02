@@ -1,10 +1,10 @@
 pub fn day1_part1(input: &[u8]) -> i64 {
-    let mut dial: i64 = 50;
+    let mut dial: i32 = 50;
     input
         .split(|&b| b == b'\n')
         .filter(|line| !line.is_empty())
         .filter(|line| {
-            let num: i64 = unsafe { std::str::from_utf8_unchecked(&line[1..]) }
+            let num: i32 = unsafe { std::str::from_utf8_unchecked(&line[1..]) }
                 .parse()
                 .expect("not a number");
 
@@ -22,25 +22,17 @@ pub fn day1_part1(input: &[u8]) -> i64 {
 pub fn day1_part1_lowlevel(input: &[u8]) -> i64 {
     let mut dial: i64 = 50;
     let mut count: i64 = 0;
-    let mut i = 0;
-    let len = input.len();
+    let mut bytes = input.iter();
 
-    while i < len {
-        // SAFETY: i < len checked above
-        let dir = unsafe { *input.get_unchecked(i) };
-        i += 1;
-
+    while let Some(&dir) = bytes.next() {
         // Parse number inline
         let mut num: i64 = 0;
-        while i < len {
-            let b = unsafe { *input.get_unchecked(i) };
+        for &b in bytes.by_ref() {
             if b == b'\n' {
                 break;
             }
             num = num * 10 + (b - b'0') as i64;
-            i += 1;
         }
-        i += 1; // skip newline
 
         dial = match dir {
             b'L' => (dial - num).rem_euclid(100),
@@ -58,8 +50,9 @@ pub fn day1_part1_lowlevel(input: &[u8]) -> i64 {
 
 #[inline(never)]
 pub fn day1_part1_unsafe(input: &[u8]) -> i64 {
-    // Full table: covers index 0 to 2099 (values -1000 to +1099 after offset)
-    const MOD100_FULL: [i32; 2100] = {
+    // Precomputed modulo table to avoid expensive rem_euclid operations
+    // Covers range [-1000, 1099] mapped to indices [0, 2099]
+    const MOD100_TABLE: [i32; 2100] = {
         let mut table = [0i32; 2100];
         let mut i = 0i32;
         while i < 2100 {
@@ -69,6 +62,7 @@ pub fn day1_part1_unsafe(input: &[u8]) -> i64 {
         table
     };
 
+    // SAFETY: All pointer operations are bounds-checked against `end`
     unsafe {
         let mut ptr = input.as_ptr();
         let end = ptr.add(input.len());
@@ -79,7 +73,7 @@ pub fn day1_part1_unsafe(input: &[u8]) -> i64 {
             let dir = *ptr;
             ptr = ptr.add(1);
 
-            // Parse number - unrolled for 1-3 digit case
+            // Parse number with loop unrolling for common 1-3 digit cases
             let d1 = (*ptr - b'0') as i32;
             ptr = ptr.add(1);
 
@@ -96,16 +90,17 @@ pub fn day1_part1_unsafe(input: &[u8]) -> i64 {
                 }
             }
 
-            // Skip newline if present
+            // Skip newline
             if ptr < end {
                 ptr = ptr.add(1);
             }
 
-            // No modulo needed! Full table lookup
-            // sign: L=-1, R=+1
+            // Branchless direction calculation: L=-1, R=+1
+            // Works because L=0x4C (bit 3 = 1), R=0x52 (bit 3 = 0)
             let sign = 1 - 2 * (((dir >> 3) & 1) as i32);
-            dial = *MOD100_FULL.get_unchecked((dial + sign * num + 1000) as usize);
+            dial = *MOD100_TABLE.get_unchecked((dial + sign * num + 1000) as usize);
 
+            // Branchless count increment
             count += (dial == 0) as i64;
         }
 
