@@ -1,5 +1,5 @@
 use aoc2025::{
-    day1::{day1_part1, day1_part1_lowlevel, day1_part1_unsafe},
+    day1::{day1_part1, day1_part1_lowlevel, day1_part1_unsafe, day1_part2},
     input,
 };
 use divan::{Bencher, black_box};
@@ -32,5 +32,14 @@ fn day1_part1_unsafe_bench(bencher: Bencher) {
 
     bencher.bench_local(move || {
         day1_part1_unsafe(black_box(&input));
+    });
+}
+
+#[divan::bench]
+fn day1_part2_bench(bencher: Bencher) {
+    let input = input("resources/day01_input.txt");
+
+    bencher.bench_local(move || {
+        day1_part2(black_box(&input));
     });
 }

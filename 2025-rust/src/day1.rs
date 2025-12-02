@@ -98,7 +98,8 @@ pub fn day1_part1_unsafe(input: &[u8]) -> i64 {
             // Branchless direction calculation: L=-1, R=+1
             // Works because L=0x4C (bit 3 = 1), R=0x52 (bit 3 = 0)
             let sign = 1 - 2 * (((dir >> 3) & 1) as i32);
-            dial = *MOD100_TABLE.get_unchecked((dial + sign * num + 1000) as usize);
+            // dial = *MOD100_TABLE.get_unchecked((dial + sign * num + 1000) as usize);
+            dial = (dial + sign * num + 1000) % 100;
 
             // Branchless count increment
             count += (dial == 0) as i64;
@@ -106,6 +107,30 @@ pub fn day1_part1_unsafe(input: &[u8]) -> i64 {
 
         count
     }
+}
+
+pub fn day1_part2(input: &[u8]) -> i64 {
+    let mut dial: i32 = 50;
+    let mut count = 0;
+    for line in input.split(|&b| b == b'\n').filter(|line| !line.is_empty()) {
+        let num: i32 = unsafe { std::str::from_utf8_unchecked(&line[1..]) }
+            .parse()
+            .expect("not a number");
+
+        let direction = match line[0] {
+            b'L' => -1,
+            b'R' => 1,
+            _ => panic!("Invalid direction: {:?}", line[0] as char),
+        };
+        for _ in 0..num {
+            dial += direction;
+            dial = dial.rem_euclid(100);
+            if dial == 0 {
+                count += 1;
+            }
+        }
+    }
+    count
 }
 
 #[cfg(test)]
@@ -128,5 +153,17 @@ mod tests {
         assert_eq!(984, day1_part1(&input));
         assert_eq!(984, day1_part1_lowlevel(&input));
         assert_eq!(984, day1_part1_unsafe(&input));
+    }
+
+    #[test]
+    fn day2_part1_sample() {
+        let input = input("resources/day01_sample.txt");
+        println!("input: {:?}", input);
+        assert_eq!(6, day1_part2(&input));
+    }
+    #[test]
+    fn day2_part1_test() {
+        let input = input("resources/day01_input.txt");
+        assert_eq!(984, day1_part2(&input));
     }
 }
