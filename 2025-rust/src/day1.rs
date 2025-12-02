@@ -4,7 +4,8 @@ pub fn day1_part1(input: &[u8]) -> i64 {
         .split(|&b| b == b'\n')
         .filter(|line| !line.is_empty())
         .filter(|line| {
-            let num: i32 = unsafe { std::str::from_utf8_unchecked(&line[1..]) }
+            let num: i32 = std::str::from_utf8(&line[1..])
+                .expect("Failed to convert to string")
                 .parse()
                 .expect("not a number");
 
@@ -156,14 +157,14 @@ mod tests {
     }
 
     #[test]
-    fn day2_part1_sample() {
+    fn day1_part2_sample() {
         let input = input("resources/day01_sample.txt");
         println!("input: {:?}", input);
         assert_eq!(6, day1_part2(&input));
     }
     #[test]
-    fn day2_part1_test() {
+    fn day1_part2_test() {
         let input = input("resources/day01_input.txt");
-        assert_eq!(984, day1_part2(&input));
+        assert_eq!(5657, day1_part2(&input));
     }
 }
