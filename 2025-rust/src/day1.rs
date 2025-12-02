@@ -4,8 +4,7 @@ pub fn day1_part1(input: &[u8]) -> i64 {
         .split(|&b| b == b'\n')
         .filter(|line| !line.is_empty())
         .filter(|line| {
-            let num: i64 = std::str::from_utf8(&line[1..])
-                .expect("not UTF-8")
+            let num: i64 = unsafe { std::str::from_utf8_unchecked(&line[1..]) }
                 .parse()
                 .expect("not a number");
 
